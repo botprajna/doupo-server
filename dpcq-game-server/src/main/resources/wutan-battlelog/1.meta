@@ -1,0 +1,14 @@
+chapterId=1
+fightIdx=9500
+originIdx=9499
+originX=0
+originY=0
+originZ=6.5
+speed=1
+startTime=66
+win=true
+dataBytes=3648
+winner.count=1
+winner.0=0,1001,0,9,25089,1834,0
+loser.count=1
+loser.0=0,0,999001,0,1834,25089,0

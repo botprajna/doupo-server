@@ -1,0 +1,1497 @@
+syntax = "proto3";
+
+package doupo;
+
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "SceneProto";
+option java_multiple_files = true;
+
+message VectorVo {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+message ChangeSceneReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50780;
+    }
+
+    int32 map_id = 1;
+}
+
+message ChangeSceneFinishAReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50754;
+    }
+
+    int32 map_id = 1;
+}
+
+message ChangeSceneFinishBReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50755;
+    }
+
+    int32 map_id = 1;
+}
+
+message GuidanceMainMapPauseReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61975;
+    }
+
+    bool pause = 1;
+}
+
+message GuidanceOpenAutoSkillReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61977;
+    }
+}
+
+message PlayerGuideSaveReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50366;
+    }
+
+    int32 guide_group = 1;
+    int32 guide_id = 2;
+}
+
+message IntegerAndIntegerPairEntry {
+    int32 key = 1;
+    int32 value = 2;
+}
+
+// 任务 200004 领奖时下发；字段来自客户端 PlayerCumulateLoginDaysResp。
+message PlayerCumulateLoginDaysResp {
+    int32 cumulate_login_days = 1;
+    repeated IntegerAndIntegerPairEntry module_open_id2_cumulate_login_days = 2;
+}
+
+message CrisisEventInfoResp {
+    repeated CrisisEventVo events = 1;
+    repeated int32 reward_free_open_days = 2 [packed = true];
+}
+
+message CrisisEventVo {
+    int32 id = 1;
+    int64 start_millis = 2;
+    bool reward = 3;
+}
+
+message CrisisEventFreeRewardReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 76705;
+    }
+
+    int32 open_day = 1;
+}
+
+message CrisisEventFreeRewardResp {
+    int32 open_day = 1;
+}
+
+message CrisisEventRewardReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 76703;
+    }
+
+    int32 event_id = 1;
+}
+
+message CrisisEventRewardResp {
+    int32 event_id = 1;
+}
+
+message CrisisEventUpdateResp {
+    repeated CrisisEventVo updates = 1;
+}
+
+message StoryReadFinishReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 51156;
+    }
+
+    int32 finish_story_id = 1;
+}
+
+message StoryReadFinishResp {
+    int32 finish_story_id = 1;
+}
+
+message PlayerGuideSaveResp {
+    repeated IntegerAndIntegerPairEntry guide_group_and_id_pair_list = 1;
+}
+
+message GuidanceMainMapMonsterEnterReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61973;
+    }
+
+    int32 chapter_id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+    float hero_x = 5;
+    float hero_y = 6;
+    float hero_z = 7;
+    float angle = 8;
+}
+
+message GuidanceMainMapStartFightReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61974;
+    }
+
+    float x = 1;
+    float y = 2;
+    float z = 3;
+    float terrain_x = 4;
+    float terrain_y = 5;
+    float terrain_z = 6;
+}
+
+// 第六关开始使用的主地图技能请求，对应抓包协议 61972。
+message GuidanceMainMapUseSkillReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61972;
+    }
+
+    int64 skill_id = 1;
+    int64 target_id = 2;
+    float x = 3;
+    float y = 4;
+    float z = 5;
+    int64 time = 6;
+    float tx = 7;
+    float ty = 8;
+    float tz = 9;
+    int32 skip_time = 10;
+}
+
+message GuidanceUseSkillReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61998;
+    }
+
+    int64 skill_id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+}
+
+message MainMapKillMonsterReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61964;
+    }
+
+    int32 main_map_chapter_id = 1;
+    int64 monster_id = 2;
+    VectorVo position = 3;
+}
+
+// 乌坦城起主线切战报模式，对应抓包 idx 9554 / 9556。
+message MainMapStartFightReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61962;
+    }
+
+    int32 main_map_chapter_id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+    float terrain_x = 5;
+    float terrain_y = 6;
+    float terrain_z = 7;
+    bool background_task = 8;
+    float angle = 9;
+}
+
+message MainMapStartFightResp {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61971;
+    }
+
+    int32 main_map_chapter_id = 1;
+    BattleLogResp battle_log = 2;
+    int32 result = 3;
+    int32 index = 4;
+    bool end = 5;
+}
+
+message BattleLogResp {
+    int64 battle_log_id = 1;
+    int32 type = 2;
+    int32 index = 3;
+    bytes data = 4;
+    FightStatisticsResp fight_statistics_resp = 5;
+    int64 start_time = 6;
+    PreBattleInfo pre_battle_info = 7;
+    bool fin = 8;
+    float speed = 9;
+}
+
+message FightStatisticsResp {
+    int64 battle_log_id = 1;
+    repeated StatisticsResp winner = 2;
+    repeated StatisticsResp loser = 3;
+    bool win = 4;
+}
+
+message StatisticsResp {
+    int32 essence_fire_id = 1;
+    int32 hero_job_id = 2;
+    int64 monster_id = 3;
+    int32 level = 4;
+    int64 damage = 5;
+    int64 take_damage = 6;
+    int64 cure = 7;
+}
+
+message PreBattleInfo {
+    int64 create_time = 1;
+    repeated BattleLogPlayerInfo player_info_list = 2;
+}
+
+message BattleLogPlayerInfo {
+    int64 player_id = 1;
+    int64 camp_id = 2;
+    bool in_battle = 4;
+}
+
+message BattleLogVO {
+    repeated BattleLogEntryVO entry_list = 1;
+}
+
+message BattleLogEntryVO {
+    int64 time = 1;
+    repeated BattleLogItemVO item_list = 2;
+}
+
+message BattleLogItemVO {
+    int32 packet_id = 1;
+    bytes data = 2;
+}
+
+message BattleLogUpdateVisibleResp {
+    SceneUpdateVisibleResp scene_update_visible_resp = 1;
+    int32 type = 2;
+}
+
+// 客户端 BattleLogForgetVisibleResp.cs：50805 带战场类型的移除消息。
+message BattleLogForgetVisibleResp {
+    SceneForgetVisibleResp scene_forget_visible_resp = 1;
+    int32 type = 2;
+}
+
+// 客户端 LockTargetResp.cs / InFightStatisticResp.cs / SimpleStatisticsResp.cs。
+message LockTargetResp {
+    int64 id = 1;
+    int64 target_id = 2;
+    int32 target_pos = 3;
+}
+
+message InFightStatisticResp {
+    repeated SimpleStatisticsResp statistics_resp_list = 1;
+}
+
+message SimpleStatisticsResp {
+    int64 guid = 1;
+    int64 damage = 2;
+    int64 cure = 3;
+}
+
+message GuidanceKillMonsterReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61997;
+    }
+
+    int64 monster_id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+}
+
+message MainMapEndFightReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61963;
+    }
+
+    int32 main_map_chapter_id = 1;
+}
+
+message GuidanceMainMapResetReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61976;
+    }
+
+    bool enter_next = 1;
+}
+
+message TaskRewardReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50901;
+    }
+
+    TaskUniqueKey task_id = 1;
+}
+
+message ChangeSceneResp {
+    int32 map_id = 1;
+    VectorVo point = 2;
+    float dir = 3;
+    int32 map_change_type = 4;
+}
+
+message AttributeVO {
+    int32 type = 1;
+    double value = 2;
+}
+
+message SceneFightUnitInfoVo {
+    int64 camp_id = 1;
+    repeated AttributeVO attribute_list = 2;
+}
+
+message HeroSkinPart {
+    int32 type = 1;
+    int32 cfg_id = 2;
+}
+
+message CrossHeroShortInfo {
+    int32 hero_idx = 1;
+    int32 job = 2;
+    int64 scene_unit_uid = 3;
+    int32 level = 4;
+    int32 stage = 5;
+    int32 wing_level = 6;
+    int32 wear_avatar_id = 7;
+    bool show_wing = 8;
+    repeated HeroSkinPart skin_list = 9;
+    int32 skill_element = 11;
+}
+
+message HeroShortInfoVo {
+    int32 hero_index = 1;
+    CrossHeroShortInfo cross_hero_short_info = 2;
+}
+
+message HeroShortInfoUpdateResp {
+    HeroShortInfoVo short_info_vo = 1;
+}
+
+message SceneHeroVo {
+    int32 server_id = 1;
+    string server_name = 2;
+    int64 player_id = 3;
+    string player_name = 4;
+    double fight_power = 5;
+    int32 head = 6;
+    int32 head_frame = 7;
+    int32 level = 8;
+    int32 title = 9;
+    int32 sex = 10;
+    int32 state = 11;
+    double cur_energy = 12;
+    double max_energy = 13;
+    int32 enter_index = 14;
+    bool client_driven = 15;
+    int32 fighting_scene_boss_res_id = 16;
+    int64 gathering_target_id = 17;
+    CrossHeroShortInfo cross_hero_short_info = 18;
+    VectorVo offset = 19;
+    int32 sync_type = 20;
+    int32 domain_id = 21;
+    bool robot = 22;
+    SkillContainerVO skill_container_vo = 23;
+    VectorVo run_offset = 24;
+    VectorVo fight_offset = 25;
+}
+
+message FightSkillUpdateResp {
+    int64 id = 1;
+    int64 skill_id = 2;
+    int64 cd = 3;
+    int32 cost_mp = 4;
+    int32 cost_cd = 5;
+    int32 charge_count = 6;
+    int32 fight_state_use_count = 7;
+    int64 next_charge_time = 8;
+    bool active_skill = 9;
+}
+
+message MpResp {
+    int64 id = 1;
+    double mp = 2;
+}
+
+message SkillContainerVO {
+    repeated FightSkillUpdateResp skill_list = 1;
+}
+
+message SceneCommonSkillVO {
+    int64 player_id = 1;
+    int64 create_time = 2;
+}
+
+message SceneMonsterVo {
+    int32 monster_id = 1;
+    int64 template_id = 2;
+    int32 element_id = 3;
+    int64 create_time = 4;
+    int64 lock_target_id = 5;
+    int32 scene_boss_res_id = 6;
+    int32 main_map_id = 7;
+    repeated MonsterRewardVo main_map_reward = 8;
+    bool first_kill = 9;
+    float scale = 10;
+}
+
+message MonsterRewardVo {
+    int32 item_key = 1;
+    int64 amount = 2;
+}
+
+message SceneUnitBaseInfoVo {
+    int64 id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+    int32 state = 5;
+    float dir = 6;
+    int32 unit_type = 7;
+}
+
+message SceneUnitVo {
+    SceneUnitBaseInfoVo base_info_vo = 1;
+    SceneFightUnitInfoVo fight_info_vo = 2;
+    SceneMonsterVo scene_monster_vo = 3;
+    SceneHeroVo hero_vo = 4;
+    SceneMissileVo missile_vo = 5;
+    SceneCommonSkillVO common_skill_vo = 12;
+}
+
+// 客户端 SceneMissileVo.cs / MissileStageVO.cs，source/target 是场景对象 ID。
+message SceneMissileVo {
+    int64 missile_id = 1;
+    MissileStageVO stage_vo = 2;
+    int64 source_id = 3;
+    int64 target_id = 4;
+    int64 create_time = 5;
+    int64 reason_skill_id = 6;
+}
+
+message MissileStageVO {
+    int32 stage_index = 1;
+    int64 stage_id = 2;
+    int64 start_time = 3;
+}
+
+message SceneUpdateVisibleResp {
+    bool snapshot = 1;
+    repeated SceneUnitVo visible_list = 2;
+}
+
+message AttributeActionVO {
+    repeated AttributeVO attr_list = 1;
+    int64 attack_id = 2;
+    int64 target_id = 3;
+    int32 hit_id = 4;
+}
+
+message WarningResp {
+    int64 id = 1;
+}
+
+message SceneForgetVisibleResp {
+    repeated int64 forget_ids = 1;
+}
+
+message RewardItemVo {
+    int32 item_key = 1;
+    int64 amount = 2;
+    int32 operation_type = 3;
+    MainEquipVO main_equip_vo = 5;
+    bool give_flag = 6;
+}
+
+message RewardResp {
+    int32 operation_type = 1;
+    repeated RewardItemVo reward_item_vos = 2;
+}
+
+message FightResultResp {
+    int32 battle_field_id = 1;
+    int32 battle_result_code = 2;
+}
+
+message MainMapPassChapterUpdateResp {
+    int32 main_map_chapter_id = 1;
+    int32 pass_star = 2;
+    bool has_reward = 3;
+    int32 stage_time = 4;
+    int32 last_stage_time = 5;
+    int32 lose_back_id = 6;
+    int32 next_challenge_id = 7;
+    bool gm = 8;
+    bool reset_state = 9;
+    int32 history_top_id = 10;
+    int32 change_reason = 11;
+    int32 from_reset_req = 12;
+    SceneUpdateVisibleResp hero_vo_info = 13;
+    bool fast_pass = 14;
+    int32 kill_monster_pre_hour = 15;
+}
+
+message CurrencyItemVo {
+    int32 type = 1;
+    int64 value = 2;
+}
+
+message PurseUpdateResp {
+    repeated CurrencyItemVo items = 1;
+}
+
+message ReputationLvOnTaskRewardUpdateResp {
+    int32 task_id = 1;
+    int32 reputation_lv = 2;
+}
+
+// 领 200029 后推送斗师声望（抓包第二次 idx 9063）。range=1 即斗师，1 级。
+message ReputationRangeVo {
+    int32 range = 1;
+    int32 range_inside_lv = 2;
+    int32 range_inside_not_see_old_lv = 3;
+}
+
+message ReputationInitResp {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 53703;
+    }
+    repeated ReputationRangeVo range_vo_list = 1;
+}
+
+message ReputationLvUpReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 53704;
+    }
+    int32 range = 1;
+}
+
+message ReputationLvUpResp {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 53705;
+    }
+    ReputationRangeVo update_range_vo = 1;
+}
+
+message MainEquipRandomAttrVO {
+    int32 id = 1;
+    string attr_type = 2;
+    double value = 3;
+    int32 quality = 4;
+    int32 min = 5;
+    int32 max = 6;
+}
+
+message MainEquipVO {
+    int64 object_id = 1;
+    int32 equip_id = 2;
+    int32 drop_level = 3;
+    int32 level = 4;
+    int64 exp = 5;
+    bool lock = 6;
+    repeated MainEquipRandomAttrVO random_attr_list = 7;
+}
+
+message MainEquipHeroVO {
+    int32 hero_id = 1;
+    repeated MainEquipSlotVO slot_vo_list = 2;
+    bool core_unlocked = 3;
+}
+
+// 6.9 MainEquipSlotVO；石头/器核字段 3、6 尚未接入，不重编号。
+message MainEquipSlotVO {
+    int32 position = 1;
+    MainEquipVO vo = 2;
+    int32 level = 4;
+    int64 exp = 5;
+}
+
+message MainEquipDressReq {
+    enum Proto { UNKNOWN = 0; ID = 75351; }
+    int32 hero_index = 1;
+    int32 position = 2;
+    int64 object_id = 3;
+    bool main = 4;
+}
+
+message MainEquipBagReduceResp {
+    enum Proto { UNKNOWN = 0; ID = 75354; }
+    int32 type = 1;
+    repeated int64 reduce_list = 2 [packed = true];
+}
+
+message MainEquipPositionInfoResp {
+    enum Proto { UNKNOWN = 0; ID = 75356; }
+    int32 hero_index = 1;
+    int32 position = 2;
+    bool main = 3;
+    MainEquipSlotVO vo = 4;
+}
+
+message MainEquipInfoResp {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75353;
+    }
+    repeated MainEquipVO packs = 1;
+    repeated MainEquipHeroVO hero_vo_list = 3;
+    int32 pool_id = 4;
+}
+
+message MainEquipBagAddResp {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75355;
+    }
+    bool flag = 1;
+    repeated MainEquipVO add_list = 2;
+}
+
+message MainMapTakeHangUpRewardReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61953;
+    }
+}
+
+message MainMapTakeHangUpRewardResp {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61954;
+    }
+    repeated RewardItemVo main_map_chapter_hang_up_reward = 1;
+    int64 main_map_chapter_hang_up_cal_time = 2;
+    int64 next_hang_up_reward_time = 3;
+}
+
+// 第一关主线任务 200001 领奖链。字段编号来自客户端反编译协议类，
+// 响应顺序与抓包 idx 329-343 对齐。
+message PackUpdateResp {
+    int32 operation_type = 1;
+    repeated PackUpdateVo packs = 2;
+}
+
+// 官服抓包 idx 15：登录先给空物品背包快照，BagController.OnPackInfoResp 才会初始化。
+message PackInfoResp {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50401;
+    }
+    repeated PackUpdateVo packs = 1;
+}
+
+message PackUpdateVo {
+    int32 pack_type = 1;
+    repeated UpdateItem update_items = 2;
+}
+
+message UpdateItem {
+    int32 item_index = 1;
+    PackItemVo pack_item = 2;
+}
+
+message PackItemVo {
+    int64 object_id = 1;
+    int32 key = 2;
+    int32 size = 3;
+    bool treasure_lock = 4;
+    bool is_wear = 5;
+    int64 expired_time = 6;
+    int64 create_time = 7;
+    int64 last_gain_time = 8;
+    int32 cm_star = 9;
+    bool give_flag = 10;
+    int64 cm_exp = 11;
+}
+
+message AlchemyNewMakeReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75052;
+    }
+}
+
+message AlchemyNewMakeVo {
+    int64 id = 1;
+    int32 rid = 2;
+    int64 exp = 3;
+    int32 qlt = 4;
+    int32 num = 5;
+    int32 rate = 6;
+}
+
+message AlchemyNewMakeResp {
+    repeated AlchemyNewMakeVo make_ids = 1;
+    int32 make_times = 2;
+    int32 source = 3;
+}
+
+message IntegerAndLongPairEntry {
+    int32 key = 1;
+    int64 value = 2;
+}
+
+message AlchemyNewMakeCostItemNumUpdateResp {
+    repeated IntegerAndLongPairEntry cost_item2_nums = 1;
+    repeated IntegerAndLongPairEntry cost_item2_ext_limit_nums = 2;
+}
+
+message AlchemyNewTakingReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75054;
+    }
+    repeated int64 alchemy_id = 1;
+}
+
+message AlchemyNewTakingResp {
+    int64 exp = 1;
+    repeated int64 alchemy_vo = 2;
+    repeated IntegerAndIntegerPairEntry taking_info = 3;
+}
+
+message HeroLevelVo {
+    int32 hero_index = 1;
+    int32 level = 2;
+    int32 stage = 3;
+}
+
+message HeroLevelUpgradeReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75056;
+    }
+    int32 hero_index = 1;
+}
+
+message HeroLevelUpgradeResp {
+    HeroLevelVo hero_vo = 1;
+}
+
+message AlchemyNewExpChangeResp {
+    int64 exp = 1;
+    int32 level = 2;
+}
+
+message AlchemyNewLevelUpgradeResp {
+    int32 level = 1;
+    int32 make_num = 2;
+}
+
+message HeroRoadRewardResp {
+    int32 id = 1;
+}
+
+message HeroLevelBreakReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75066;
+    }
+    int32 hero_index = 1;
+}
+
+message HeroLevelBreakResp {
+    HeroLevelVo hero_vo = 1;
+}
+
+message HeroStepUpgradeReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75058;
+    }
+    int32 hero_index = 1;
+}
+
+message HeroStepUpgradeResp {
+    HeroLevelVo hero_vo = 1;
+}
+
+message AllHeroLevelInfoResp {
+    repeated HeroLevelVo hero_vo_list = 1;
+}
+
+message RealmInfoReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 76651;
+    }
+}
+
+message RealmInfoResp {
+    repeated IntegerAndIntegerPairEntry stage2_nums = 1;
+    bool in_battle = 2;
+}
+
+message StrongStatueInfoResp {
+    bool had_like = 2;
+    repeated int32 can_set = 3 [packed = true];
+}
+
+message BattlePassInfoResp {
+}
+
+message AnimationStateSkillSlotVo {
+    int32 slot_id = 1;
+    int32 star = 2;
+}
+
+message AnimationStateSkillSlotUpdateVo {
+    int32 hero_index = 1;
+    repeated AnimationStateSkillSlotVo skill_slots = 2;
+}
+
+message AnimationStateSkillSlotUpdateResp {
+    repeated AnimationStateSkillSlotUpdateVo updates = 1;
+}
+
+message AnimationStateHeroInfoVo {
+    int32 hero_index = 1;
+    int32 proficiency_level = 2;
+    repeated AnimationStateSkillSlotVo skill_slots = 3;
+}
+
+message AnimationStateInfoResp {
+    repeated AnimationStateHeroInfoVo hero_vo_list = 1;
+}
+
+message AnimationStateHeroUpdateResp {
+    AnimationStateHeroInfoVo hero_vo = 1;
+}
+
+message StringAndDoublePairEntry {
+    string key = 1;
+    double value = 2;
+}
+
+message PlayerFightForceCheckPointChangeResp {
+    int32 check_point_type = 1;
+    double player_fight_force_before = 2;
+    double player_fight_force_after = 3;
+    repeated StringAndDoublePairEntry player_stat_map_before = 4;
+    repeated StringAndDoublePairEntry player_stat_map_after = 5;
+}
+
+enum LotteryType {
+    LOTTERY_TYPE_UNKNOWN = 0;
+    LOTTERY_TYPE_NEW_FIGHT_SKILL = 12;
+    LOTTERY_TYPE_UNIVERSAL_SKILL = 13;
+}
+
+message LotteryDrawReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 77351;
+    }
+    LotteryType lottery_type = 1;
+    bool ten = 2;
+    int32 sub_id = 3;
+}
+
+message LotteryDrawResp {
+    LotteryType lottery_type = 1;
+    bool ten = 2;
+    repeated RewardItemVo reward_item_vos = 3;
+    int32 sub_id = 4;
+    repeated int32 hit_pond_ids = 7 [packed = true];
+    bool adv_flag = 8;
+    bool failure = 9;
+}
+
+message NewFightSkillLotteryVo {
+    int32 show_stage = 1;
+    repeated IntegerAndIntegerPairEntry show_stage2_draw_count_info_list = 2;
+    int32 buff_reward_must_hit_count = 3;
+    int32 quality_rewarded_total_draw_count = 4;
+    int32 standard_total_draw_time = 5;
+}
+
+message LotteryInfoResp {
+    LotteryType lottery_type = 1;
+    int32 free_time = 2;
+    int32 total_draw_time = 3;
+    int32 today_draw_time = 4;
+    int32 must_reward_need_time = 5;
+    int32 extra_draw_time = 6;
+    repeated int32 extra_reward_ids = 7 [packed = true];
+    int32 advertise_free_time = 11;
+    int64 last_draw_time = 12;
+    NewFightSkillLotteryVo new_fight_skill_lottery_vo = 18;
+    UniversalSkillLotteryVo universal_skill_lottery_vo = 19;
+}
+
+message UniversalSkillLotteryVo {
+    int32 show_stage = 1;
+    repeated IntegerAndIntegerPairEntry show_stage2_draw_count_info_list = 2;
+    int32 buff_reward_must_hit_count = 3;
+    int32 ad_can_draw_times = 4;
+    int32 next_mst_hit_type = 5;
+    int32 cfg_draw_times = 6;
+    int32 cfg_draw_times2 = 7;
+}
+
+message LotteryPoolUpReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 77363;
+    }
+    LotteryType lottery_type = 1;
+    int32 sub_id = 2;
+}
+
+message LotteryPoolUpResp {
+    LotteryType lottery_type = 1;
+    int32 sub_id = 2;
+}
+
+message RealFirstChargeDayRewardVo {
+    int32 charge_id = 1;
+    int64 expire_millis = 2;
+    int64 buy_millis = 3;
+    repeated int32 reward_idxes = 4 [packed = true];
+    int64 reward_expire_millis = 5;
+}
+
+message RealFirstChargeUpdateResp {
+    repeated RealFirstChargeDayRewardVo updates = 1;
+}
+
+message RealFirstChargeInfoResp {
+    repeated RealFirstChargeDayRewardVo day_rewards = 1;
+}
+
+// 6.9.263 HeroSkillActReq.cs: heroIndex=1, skillBaseId=2.
+message HeroSkillActReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75010;
+    }
+
+    int32 hero_index = 1;
+    int32 skill_base_id = 2;
+}
+
+message HeroSkillActResp {
+    int32 hero_index = 1;
+    SkillVo skill = 2;
+    bool show_tips = 3;
+    PlayerSkillVo player_skill = 4;
+}
+
+message PlayerSkillVo {
+    int32 base_id = 1;
+    repeated PlayerHeroSkillVo hero_skills = 2;
+}
+
+message PlayerHeroSkillVo {
+    int32 hero_idx = 1;
+    SkillVo hero_skill = 2;
+}
+
+message SkillVo {
+    int32 base_id = 1;
+    int32 star = 2;
+    int32 act_star = 3;
+    bool awaken = 4;
+    int32 sel_element = 5;
+}
+
+message HeroSkillStarTotalMaxHisUpdateResp {
+    int32 hero_index = 1;
+    int32 skill_star_total_max_his = 2;
+}
+
+message HeroSkillStarUpReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75008;
+    }
+
+    int32 hero_index = 1;
+    int32 skill_base_id = 2;
+    repeated IntegerAndLongPairEntry skill2_cost_nums = 3;
+    repeated IntegerAndLongPairEntry item2_cost_nums = 4;
+    int32 dirt_star = 5;
+}
+
+message HeroSkillSkillUpdateResp {
+    repeated HeroSkillSkillUpdateVo updates = 1;
+    int32 reason = 2;
+    repeated PlayerSkillVo player_skill_updates = 3;
+    int32 up_type = 4;
+}
+
+message HeroSkillSkillUpdateVo {
+    int32 hero_index = 1;
+    repeated SkillVo updates = 2;
+}
+
+message HeroSkillBaseUpdateResp {
+    repeated int32 base_ids = 1 [packed = true];
+}
+
+message HeroSkillSchemaUpdateReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75004;
+    }
+
+    int32 hero_index = 1;
+    repeated IntegerAndIntegerPairEntry skills = 2;
+    int32 req_source = 3;
+}
+
+message HeroSkillSchemaVo {
+    int32 id = 1;
+    string name = 2;
+    repeated IntegerAndIntegerPairEntry slot2_skill_base_ids = 3;
+    int64 active_time = 4;
+    bool active = 5;
+}
+
+message HeroSkillSchemaUpdateResp {
+    int32 hero_index = 1;
+    HeroSkillSchemaVo schema = 2;
+    int32 req_source = 3;
+}
+
+message HeroSkillSlotVo {
+    int32 id = 1;
+    int32 lv = 2;
+    int32 master_lv = 3;
+    bool any_on_skill = 4;
+}
+
+message HeroSkillSlotUpdateResp {
+    int32 hero_index = 1;
+    repeated HeroSkillSlotVo slots = 2;
+}
+
+// 客户端点未解锁血脉槽。字段号对照 HeroSkillSlotUnlockReq.cs。
+message HeroSkillSlotUnlockReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75002;
+    }
+    int32 hero_index = 1;
+    int32 slot_id = 2;
+}
+
+message HeroSkillSlotUnlockResp {
+    int32 hero_index = 1;
+    HeroSkillSlotVo slot = 2;
+}
+
+message PlayerSkillInfoResp {
+    bool auto_star = 6;
+    int32 max_schema_id = 7;
+}
+
+message HeroSkillInfoResp {
+    repeated HeroSkillVo hero_vo_list = 1;
+}
+
+message HeroSkillVo {
+    int32 hero_index = 1;
+    repeated HeroSkillSlotVo slots = 2;
+    int32 cur_schema_id = 3;
+    repeated HeroSkillSchemaVo schemas = 4;
+    repeated SkillVo skills = 5;
+    int32 skill_element = 6;
+    int32 skill_star_total_max_his = 7;
+}
+
+message StatVo {
+    int32 type = 1;
+    double value = 2;
+}
+
+message HeroStatVo {
+    int32 hero_index = 1;
+    repeated StatVo stats = 2;
+}
+
+message HeroStatUpdateResp {
+    HeroStatVo hero_vo = 1;
+    repeated int32 fight_stat_power_sources = 2 [packed = true];
+}
+
+message PlayerFightForceResp {
+    double player_fight_force = 1;
+    repeated int32 fight_stat_power_sources = 2 [packed = true];
+}
+
+message HeroFightForceVo {
+    int32 hero_index = 1;
+    double fight_force = 2;
+}
+
+message HeroFightForceResp {
+    repeated HeroFightForceVo hero_vo_list = 1;
+}
+
+message TaskUniqueKey {
+    int32 task_resource_id = 1;
+    int32 activity_id = 2;
+}
+
+enum TaskPhase {
+    UN_OPEN = 0;
+    ACCEPTABLE = 1;
+    PROGRESS = 2;
+    FINISHED = 3;
+    REWARDED = 4;
+}
+
+message TaskVo {
+    TaskUniqueKey task_id = 1;
+    TaskPhase task_phase = 2;
+    repeated int64 progress_values = 3;
+}
+
+message TaskUpdateResp {
+    repeated TaskUniqueKey acceptable_task_ids = 1;
+    repeated TaskVo task_vos = 2;
+    repeated TaskUniqueKey reward_task_ids = 3;
+    repeated TaskUniqueKey removed_task_ids = 4;
+}
+
+enum ServerVoUpdateType {
+    ALL = 0;
+    ADD = 1;
+    REPLACE = 2;
+    SHOW_INFO = 3;
+    REMOVE = 4;
+    REMOVE_AND_UPDATE_FIRE = 5;
+}
+
+message SyncNonSceneHeroVoUpdateResp {
+    repeated SceneUnitVo vo_list = 1;
+    repeated SceneUnitVo remove = 2;
+    ServerVoUpdateType operation_type = 3;
+}
+
+// ---------------------------------------------------------------------------
+// 战斗下推协议。
+//
+// 字段 tag 全部来自客户端反编译的 [ProtoMember(n)] 与 MergeFrom(case n)：
+//   decompiled-gameplay-runtime/UseSkillResp.cs
+//   decompiled-gameplay-runtime/SkillActionResp.cs
+//   decompiled-gameplay-runtime/ActionVo.cs
+//   decompiled-gameplay-runtime/DamageVO.cs
+//   decompiled-gameplay-runtime/MoveResp.cs
+//   decompiled-gameplay-runtime/FightMoveVo.cs
+//   decompiled-gameplay-runtime/ChaseStartResp.cs
+//   decompiled-gameplay-runtime/ChaseStopResp.cs
+//
+// 协议号来自 decompiled-gameplay-runtime/SGEngine.GameplayCustom/ProtocolDefine.cs：
+//   MoveResp = 50761、UseSkillResp = 50762、SkillActionResp = 50763、
+//   ChaseStartResp = 50832、ChaseStopResp = 50834
+// ---------------------------------------------------------------------------
+
+// DamageVO.type 的取值，来自客户端 DamageType.cs。
+// 官服抓包中怪物普攻使用 GENERAL_SKILL。
+enum DamageTypeVo {
+    DAMAGE_TYPE_UNKNOWN = 0;
+    GENERAL_SKILL = 1;
+    FIGHT_SKILL = 2;
+    ADDITIONAL_DAMAGE = 3;
+    COUNTERATTACK = 4;
+    GENERAL = 5;
+}
+
+message DamageVO {
+    double damage = 1;
+    int32 special = 2;
+    int64 action_id = 3;
+    DamageTypeVo type = 4;
+    double shield_damage = 5;
+    int32 group = 6;
+    int64 skill_id = 7;
+    int64 skill_base_id = 8;
+    int64 attack_id = 9;
+    int64 target_id = 10;
+    int32 hit_id = 11;
+}
+
+// 官服 idx 6011/6050：击杀写 DieVO，不立刻 SceneForget。
+// 客户端 FightResultDead 靠它播死亡，目标还留在场景里才能飘字和受击特效。
+message DieVO {
+    int64 monster_template_id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+    float dir = 5;
+    int64 attack_id = 6;
+    int64 target_id = 7;
+    int32 hit_id = 8;
+}
+
+// 客户端 FightResultFactory.CreateFightResultList 只按子消息是否存在分发，
+// 不读 action_vo_type_id；该字段仅为与官服抓包保持一致而填写。
+message ActionVo {
+    int32 action_vo_type_id = 1;
+    DamageVO damage_vo = 2;
+    BuffAddActionVO buff_add_action_vo = 4;
+    BuffRemoveActionVO buff_remove_action_vo = 5;
+    DieVO die_vo = 7;
+    HitActionVO hit_action_vo = 11;
+    AttributeActionVO attribute_action_vo = 19;
+}
+
+// 客户端 HitActionVO.cs 的 ProtoMember 1–15；受击位移也引用战斗单位。
+message HitActionVO {
+    int32 hit_type = 1;
+    float height = 2;
+    int64 server_start_time = 3;
+    int32 duration = 4;
+    float tx = 5;
+    float ty = 6;
+    float tz = 7;
+    float hit_back_final_speed_ratio = 8;
+    float x = 9;
+    float y = 10;
+    float z = 11;
+    float dir = 12;
+    int64 attack_id = 13;
+    int64 target_id = 14;
+    int32 hit_id = 15;
+}
+
+// 字段来自客户端 BuffAddActionVO.cs / BuffRemoveActionVO.cs / BuffVO.cs。
+message BuffAddActionVO {
+    BuffVO buff_vo = 1;
+    int64 attack_id = 2;
+    int64 target_id = 3;
+    int32 hit_id = 4;
+}
+
+message BuffRemoveActionVO {
+    int64 buff_id = 1;
+    int64 attack_id = 2;
+    int64 target_id = 3;
+    int32 hit_id = 4;
+}
+
+message BuffVO {
+    int64 id = 1;
+    int64 model_id = 2;
+    int32 layer = 3;
+    int64 start_time = 4;
+    int64 end_time = 5;
+    bool control_decay = 6;
+    int64 reason_skill_id = 7;
+    int64 link_target_id = 8;
+}
+
+message UseSkillResp {
+    int64 attack_id = 1;
+    int64 skill_id = 2;
+    int64 target_id = 3;
+    float cur_x = 4;
+    float cur_y = 5;
+    float cur_z = 6;
+    float target_x = 7;
+    float target_y = 8;
+    float target_z = 9;
+    float angle = 10;
+    int32 start_type = 11;
+    bool server_advance = 12;
+    int32 skill_no = 13;
+    int32 fail_code = 14;
+    int32 skip_time = 15;
+    float time_ratio = 16;
+    bool play_skill_black_mask = 17;
+}
+
+message SkillActionResp {
+    int64 skill_id = 1;
+    repeated ActionVo action_list = 2;
+}
+
+message FightMoveVo {
+    int64 id = 1;
+    int32 type = 2;
+    float angle = 3;
+    float joystick_angle = 4;
+    float x = 5;
+    float y = 6;
+    float z = 7;
+    float angular_speed = 8;
+    float cur_x = 9;
+    float cur_y = 10;
+    float cur_z = 11;
+}
+
+message MoveResp {
+    FightMoveVo move = 1;
+}
+
+message PullStartResp {
+    int64 fighter_id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+    float tx = 5;
+    float ty = 6;
+    float tz = 7;
+    int64 action_id = 8;
+    int64 atk_id = 9;
+}
+
+// 客户端 PullEndResp.cs：50829。
+message PullEndResp {
+    int64 fighter_id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+}
+
+message SkillMoveResp {
+    int64 fighter_id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+    float tx = 5;
+    float ty = 6;
+    float tz = 7;
+    int32 move_time = 8;
+    int64 skill_id = 9;
+}
+
+message ChaseStartResp {
+    int64 fighter_id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+    float tx = 5;
+    float ty = 6;
+    float tz = 7;
+    float speed = 8;
+    int64 skill_id = 9;
+}
+
+message ChaseStopResp {
+    int64 fighter_id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+    int64 skill_id = 5;
+}
+
+message LongAndIntegerPairEntry {
+    int64 key = 1;
+    int32 value = 2;
+}
+
+// 装备血脉斗技后推可用主动技。抓包 idx 9044/9127 是第三格装焰分时的例子。
+message ActiveSkillChangeResp {
+    repeated LongAndIntegerPairEntry buff_trigger2_base_skill = 1;
+    repeated int64 can_use_skill = 2 [packed = true];
+}
+
+message HeroJobSkillElementVo {
+    int32 job = 1;
+    int32 skill_element = 2;
+}
+
+message HeroSkillJobElementUpdateResp {
+    repeated HeroJobSkillElementVo job_skill_elements = 1;
+}
+
+message HeroSkillElementUpdateResp {
+    int32 hero_index = 1;
+    int32 skill_element = 2;
+}
+
+message FightSchemaHeroInfoVo {
+    int32 index = 1;
+    int32 job_id = 2;
+    int32 sub_id = 3;
+    int32 skill_element_enum = 4;
+    repeated int64 skill_info = 5 [packed = true];
+}
+
+message FightSchemaInfo {
+    repeated FightSchemaHeroInfoVo hero_info_vos = 1;
+}
+
+message FightSchemaVo {
+    int32 id = 1;
+    bool unlock = 2;
+    string name = 3;
+    FightSchemaInfo fight_schema_info = 4;
+}
+
+message FightSchemaInfoResp {
+    int32 current_schema = 1;
+    repeated FightSchemaVo fight_schema_vos = 2;
+    int32 change_time = 3;
+}
+
+message BaoBuStartResp {
+    int64 fighter_id = 1;
+    int64 skill_id = 2;
+    int32 move_time = 3;
+    float back_offset = 4;
+    repeated int64 kill_target_ids = 5 [packed = true];
+    int64 stop_target_id = 6;
+    float x = 7;
+    float y = 8;
+    float z = 9;
+}
+
+// 万兽鼎。领取到达乌坦城任务 200026 后推送（抓包第二次 idx 8700）。
+message MedicineCauldronInfoResp {
+    bool have_buy = 1;
+    int32 active_level = 2;
+    int32 can_upgrade_level = 3;
+    repeated IntegerAndLongPairEntry hero_index2_daily_extra_exp_list = 4;
+}
+
+message MedicineCauldronHistoryConsumeReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 61506;
+    }
+}
+
+message MedicineCauldronHistoryConsumeResp {
+    int64 history_consume_item_num = 1;
+}

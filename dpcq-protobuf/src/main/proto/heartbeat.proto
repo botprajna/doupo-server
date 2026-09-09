@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package doupo;
+
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "HeartbeatProto";
+option java_multiple_files = true;
+
+message HeartbeatRequest {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 10001;
+    }
+
+    int64 client_time = 1;
+}
+
+message HeartbeatResponse {
+    int64 server_time = 1;
+}

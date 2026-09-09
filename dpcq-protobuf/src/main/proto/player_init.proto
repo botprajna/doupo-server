@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package doupo;
+
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "PlayerInitProto";
+option java_multiple_files = true;
+
+message PlayerInitBeginResp {
+    int64 player_id = 1;
+    string name = 2;
+    bool server_open = 3;
+    int64 server_open_time = 4;
+    int64 create_time = 5;
+    int32 fight_logic_version = 6;
+    string server_version = 7;
+    string battle_version = 8;
+}
+
+message PlayerInitEndResp {
+}

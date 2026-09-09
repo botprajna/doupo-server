@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package doupo;
+
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "PlayerCreateProto";
+option java_multiple_files = true;
+
+enum SexType {
+    SEX_TYPE_UNSPECIFIED = 0;
+    MALE = 1;
+    FEMALE = 2;
+}
+
+message PlayerCreateReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50351;
+    }
+
+    string name = 1;
+    bool old_comer = 2;
+    SexType sex_type = 3;
+    int64 inviter_id = 4;
+    int32 job_type = 5;
+}
+
+message PlayerStartLoginResp {
+}

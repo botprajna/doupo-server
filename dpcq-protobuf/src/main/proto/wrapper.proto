@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package doupo;
+
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "WrapperProto";
+option java_multiple_files = true;
+
+message MessageWrapper {
+    int32 proto_id = 1;
+    int64 request_id = 2;
+    bytes data = 3;
+    int32 code = 4;
+    string message = 5;
+}

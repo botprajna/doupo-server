@@ -1,0 +1,28 @@
+# Maven build outputs
+**/target/
+*.jar.original
+
+# Runtime logs and temporary files
+logs/
+**/logs/
+*.log
+*.pid
+runtime/
+
+# Editor and local agent settings
+.idea/
+.vscode/
+.claude/
+
+# Local credentials and private configuration
+database.db
+.env
+*.local.properties
+
+# Packet captures
+*.har
+*抓包*.json
+
+# Operating system files
+.DS_Store
+Thumbs.db

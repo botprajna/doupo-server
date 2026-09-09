@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package doupo;
+
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "FriendInitProto";
+option java_multiple_files = true;
+
+message FriendApplyListReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 51605;
+    }
+}
+
+message FriendApplyListResp {
+}
+
+message FriendBlackListReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 51607;
+    }
+}
+
+message FriendBlackListResp {
+}
+
+message FriendListReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 51609;
+    }
+}
+
+message FriendListResp {
+}
+
+message RedDotUpdateReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 62902;
+    }
+}

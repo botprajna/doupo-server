@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package doupo;
+
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "MainStageProto";
+option java_multiple_files = true;
+
+import "scene.proto";
+
+message MainMapChapterInfoResp {
+    int32 main_map_chapter_id = 1;
+    int32 change_reason = 2;
+    int32 pass_star = 3;
+    repeated RewardItemVo main_map_chapter_hang_up_reward = 4;
+    int64 main_map_chapter_hang_up_cal_time = 5;
+    int64 next_hang_up_reward_time = 6;
+    bool has_reward = 7;
+    int32 stage_time = 8;
+    int32 last_stage_time = 9;
+    int32 lose_back_id = 10;
+    int32 next_challenge_id = 11;
+    int32 history_top_id = 12;
+    int32 kill_monster_pre_hour = 13;
+}

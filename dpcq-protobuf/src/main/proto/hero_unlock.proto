@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package doupo;
+
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "HeroUnlockProto";
+option java_multiple_files = true;
+
+message HeroUnlockIndexesResp {
+    repeated int32 unlock_hero_indexes = 1;
+}
+
+message HeroUnlockReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50452;
+    }
+
+    int32 unlock_hero_index = 1;
+}
+
+message HeroUnlockResp {
+    int32 unlock_hero_index = 1;
+}
+
+// 斗技/装备界面查询节点战力。第 9 关引导 10043 打开斗技时会发，对应抓包 idx 8225-8226。
+message HeroOriginNodeStatReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50458;
+    }
+
+    int32 hero_index = 1;
+    int32 stat_show_node = 2;
+}
+
+message StatShowNodeVo {
+    int32 stat_show_node = 1;
+    double fight_force = 4;
+}
+
+message HeroOriginNodeStatVo {
+    int32 hero_index = 1;
+    StatShowNodeVo stat_show_node_vo = 2;
+    double hero_power = 3;
+    double hero_node_power = 4;
+}
+
+message HeroOriginNodeStatResp {
+    HeroOriginNodeStatVo hero_vo = 1;
+}

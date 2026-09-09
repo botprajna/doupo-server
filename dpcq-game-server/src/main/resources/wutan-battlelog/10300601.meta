@@ -1,0 +1,17 @@
+chapterId=10300601
+fightIdx=9900
+originIdx=9899
+originX=320.9934997558594
+originY=4.310999870300293
+originZ=457.2052917480469
+speed=1.100000023841858
+startTime=66
+win=true
+dataBytes=8252
+winner.count=1
+winner.0=0,1001,0,14,29233,909,0
+loser.count=4
+loser.0=0,0,1006101,0,909,5992,0
+loser.1=0,0,1006102,0,0,7747,0
+loser.2=0,0,1006103,0,0,7747,0
+loser.3=0,0,1006104,0,0,7747,0

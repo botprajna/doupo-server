@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package doupo;
+
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "ServerGroupProto";
+option java_multiple_files = true;
+
+message IntegerAndStringPairEntry {
+    int32 key = 1;
+    string value = 2;
+}
+
+message ServerGroupInfoReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 71601;
+    }
+}
+
+message ServerGroupInfoResp {
+    repeated IntegerAndStringPairEntry server_info_list = 1;
+}

@@ -1,0 +1,1400 @@
+{
+  "version": "6.9.263",
+  "skills": [
+    {
+      "id": 80130011,
+      "quality": 2,
+      "star": 1,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80130010,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80140001,
+      "quality": 2,
+      "star": 1,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80140000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80142101,
+      "quality": 2,
+      "star": 1,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80142100,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80142201,
+      "quality": 2,
+      "star": 1,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80142200,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80130101,
+      "quality": 2,
+      "star": 1,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80130100,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80128001,
+      "quality": 3,
+      "star": 2,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80128000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80128011,
+      "quality": 3,
+      "star": 2,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80128010,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80142001,
+      "quality": 2,
+      "star": 1,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80142000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80142301,
+      "quality": 3,
+      "star": 2,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80142300,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80142401,
+      "quality": 2,
+      "star": 1,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80142400,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80142501,
+      "quality": 2,
+      "star": 1,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80142500,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80142601,
+      "quality": 3,
+      "star": 2,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80142600,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80142701,
+      "quality": 3,
+      "star": 2,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80142700,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80142801,
+      "quality": 3,
+      "star": 2,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80142800,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80142901,
+      "quality": 3,
+      "star": 2,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80142900,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80143201,
+      "quality": 3,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80143201,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80140111,
+      "quality": 3,
+      "star": 2,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80140110,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 100001,
+      "quality": 3,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90001000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80129001,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80129000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80130001,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80130000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80140011,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80140010,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80140021,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80140020,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80140101,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80140100,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80140121,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80140120,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80141001,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80141000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80141101,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80141100,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80141201,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80141200,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80141301,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80141300,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80141401,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80141400,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80141501,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80141500,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80141601,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80141600,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80141701,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80141700,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80141801,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80141800,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80141901,
+      "quality": 4,
+      "star": 3,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80141900,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80143001,
+      "quality": 4,
+      "star": 4,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80143001,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 80143101,
+      "quality": 4,
+      "star": 4,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 80143101,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 101001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90101000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 102001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90102000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 103001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90103000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 104001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90104000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 105001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90105000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 106001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90106000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 107001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90107000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 108001,
+      "quality": 7,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90108000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 201001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90201000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 202001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90202000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 203001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90203000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 204001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90204000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 205001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90205000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 206001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90206000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 207001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90207000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 301001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90301000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 302001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90302000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 303001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90303000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 304001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90304000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 305001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90305000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 306001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90306000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 307001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90307000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 401001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90401000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 402001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90402000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 403001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90403000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 404001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90404000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 405001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90405000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 406001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90406000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 407001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90407000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 501001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90501000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 502001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90502000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 503001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90503000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 504001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90504000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 505001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90505000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 506001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90506000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 507001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90507000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 601001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90601000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 602001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90602000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 603001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90603000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 604001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90604000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 605001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90605000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 606001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90606000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 607001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90607000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 701001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90701000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 702001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90702000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 703001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90703000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 704001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90704000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 705001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90705000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 706001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90706000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 707001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90707000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 801001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90801000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 802001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90802000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 803001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90803000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 804001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90804000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 805001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90805000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 806001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90806000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    },
+    {
+      "id": 807001,
+      "quality": 5,
+      "star": 6,
+      "activeNeed": [
+        {
+          "$type": "Luban.Config.Asset_AssetModel",
+          "Type": "item",
+          "Id": 90807000,
+          "Amount": 1
+        }
+      ],
+      "skillUnlock": [],
+      "arcaneUnlock": []
+    }
+  ]
+}

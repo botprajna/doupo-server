@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package doupo;
+
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "FireTargetProto";
+option java_multiple_files = true;
+
+// 斗帝之路 / 薰儿解锁。字段来自客户端 FireTarget* 反编译。
+
+message FireTargetFindReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75652;
+    }
+}
+
+message FireTargetFindResp {
+    int32 node_id = 1;
+}
+
+message FireTargetInfoResp {
+    int32 node_id = 1;
+    bool win = 2;
+    bool unlocked = 3;
+}
+
+message FireTargetRewardReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75657;
+    }
+}
+
+message FireTargetRewardResp {
+    int32 node_id = 1;
+}
+
+message FireTargetRoleUnlockReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 75661;
+    }
+}
+
+message FireTargetRoleUnlockResp {
+    int32 node_id = 1;
+    bool win = 2;
+    bool unlocked = 3;
+}

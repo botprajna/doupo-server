@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package doupo;
+
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "PlayerRuntimeProto";
+option java_multiple_files = true;
+
+message HeartbeatReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50002;
+    }
+
+    bool schedule = 1;
+    string mtp_record = 2;
+}
+
+message HeartbeatResp {
+    int64 server_time = 1;
+}
+
+message PlayerIpLocationUpdateReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50371;
+    }
+
+    bool show_ip_location = 1;
+}
+
+message PlayerIpLocationResp {
+    string ip_location = 1;
+}
+
+message HeroJobCreateReq {
+    enum Proto {
+        UNKNOWN = 0;
+        ID = 50502;
+    }
+
+    int32 id = 1;
+    int32 hero_index = 2;
+}
+
+message HeroJobVo {
+    int32 hero_index = 1;
+    int32 job = 2;
+}
+
+message HeroJobCreateResp {
+    HeroJobVo hero_vo = 1;
+}

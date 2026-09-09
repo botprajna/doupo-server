@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package doupo;
+option java_package = "com.doupo.protocol";
+option java_outer_classname = "FightGuideProto";
+option java_multiple_files = true;
+
+// 下行 77066，抓包 idx 8209；客户端 PlayerFightGuildCallResp.cs 的 ProtoMember(1)。
+message PlayerFightGuildCallResp {
+    int32 guild_group_id = 1;
+}
