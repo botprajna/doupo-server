@@ -33,6 +33,10 @@ public final class CombatTickProcessor {
      * @param tick  定时消息
      */
     public static void onTick(ActorRef self, CombatTick tick) {
+        onTick(self, tick, System.currentTimeMillis());
+    }
+
+    static void onTick(ActorRef self, CombatTick tick, long nowMillis) {
         IPlayerContext context = tick.getContext();
         CombatSession session = CombatSessionRegistry.get(context.getId());
 
@@ -53,7 +57,6 @@ public final class CombatTickProcessor {
             return;
         }
 
-        long nowMillis = System.currentTimeMillis();
         for (MoveResp move : session.advanceMonsterMovement(nowMillis)) {
             context.write(50761, move, 0);
         }
@@ -82,7 +85,7 @@ public final class CombatTickProcessor {
                     0);
         }
 
-        NinthBossGuide.tryStart(context, session);
+        NinthBossGuide.tryStart(context, session, nowMillis);
         tick.reschedule(self);
     }
 }

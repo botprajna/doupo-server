@@ -11,6 +11,52 @@ import static org.junit.Assert.*;
 
 public class FighterElixirTest {
     @Test
+    public void fiveFighterMaterialsMergeAndSettleOverflowLikeCapturedFlow() throws Exception {
+        SceneHandler h = new SceneHandler();
+        Chapter17FlowTest.Context c = new Chapter17FlowTest.Context(100000000950L);
+        fighter(h, c.id);
+        set(h, "heroLevels", c.id, 9);
+        setExp(h, c.id, 320L);
+        h.changeAlchemyMaterial(c, 102, 5, 25);
+
+        for (int round = 0; round < 5; round++) {
+            c.writes.clear();
+            h.makeAlchemy(c, AlchemyNewMakeReq.getDefaultInstance());
+            if (round == 0) {
+                assertNull(c.last(AlchemyNewMergeResp.class));
+            } else {
+                assertEquals(4, c.last(AlchemyNewMergeResp.class).getMergesCount());
+            }
+        }
+        AlchemyNewMergeResp merge = c.last(AlchemyNewMergeResp.class);
+        for (AlchemyNewMergeVo vo : merge.getMergesList()) {
+            assertEquals(0, vo.getMake().getRid());
+            assertEquals(1400, vo.getMake().getExp());
+            assertEquals(5, vo.getMake().getNum());
+            assertEquals(1, vo.getUseIdsCount());
+        }
+
+        c.writes.clear();
+        h.takeAlchemy(c, AlchemyNewTakingReq.newBuilder()
+                .addAlchemyId(0).addAlchemyId(1).addAlchemyId(2).addAlchemyId(3).build());
+        assertEquals(5920, c.last(AlchemyNewTakingResp.class).getExp());
+        assertEquals(10, c.last(HeroLevelUpgradeResp.class).getHeroVo().getLevel());
+        assertEquals(5120, c.last(AlchemyNewExpChangeResp.class).getExp());
+
+        c.writes.clear();
+        h.breakHeroLevel(c, HeroLevelBreakReq.getDefaultInstance());
+        assertEquals(11, c.last(HeroLevelBreakResp.class).getHeroVo().getLevel());
+        assertEquals(12, c.last(HeroLevelUpgradeResp.class).getHeroVo().getLevel());
+        assertEquals(3120, c.last(AlchemyNewExpChangeResp.class).getExp());
+
+        c.writes.clear();
+        h.breakHeroLevel(c, HeroLevelBreakReq.getDefaultInstance());
+        assertEquals(13, c.last(HeroLevelBreakResp.class).getHeroVo().getLevel());
+        assertEquals(14, c.last(HeroLevelUpgradeResp.class).getHeroVo().getLevel());
+        assertEquals(720, c.last(AlchemyNewExpChangeResp.class).getExp());
+    }
+
+    @Test
     public void fighterUsesTask200027MaterialBeforeTask200036() throws Exception {
         SceneHandler h = new SceneHandler();
         Chapter17FlowTest.Context c = new Chapter17FlowTest.Context(100000000951L);
@@ -57,7 +103,13 @@ public class FighterElixirTest {
         SceneHandler h = new SceneHandler();
         Chapter17FlowTest.Context c = new Chapter17FlowTest.Context(100000000954L);
         h.changeAlchemyMaterial(c, 101, 5, 3);
-        for (int i = 0; i < 5; i++) h.makeAlchemy(c, AlchemyNewMakeReq.getDefaultInstance());
+        for (int i = 0; i < 5; i++) {
+            h.makeAlchemy(c, AlchemyNewMakeReq.getDefaultInstance());
+            AlchemyNewTakingReq.Builder take = AlchemyNewTakingReq.newBuilder();
+            c.last(AlchemyNewMakeResp.class).getMakeIdsList()
+                    .forEach(pill -> take.addAlchemyId(pill.getId()));
+            h.takeAlchemy(c, take.build());
+        }
         fighter(h, c.id);
         reward(h, c, 200027);
         c.writes.clear();
@@ -73,9 +125,6 @@ public class FighterElixirTest {
             assertEquals(captured.getMakeIds(i).toBuilder().setId(made.getMakeIds(i).getId()).build(),
                     made.getMakeIds(i));
         }
-        AlchemyNewTakingReq.Builder old = AlchemyNewTakingReq.newBuilder();
-        for (int i = 0; i < 20; i++) old.addAlchemyId(i);
-        h.takeAlchemy(c, old.build());
         h.takeAlchemy(c, AlchemyNewTakingReq.newBuilder().addAlchemyId(20).build());
         AlchemyNewTakingResp taking = c.last(AlchemyNewTakingResp.class);
         assertEquals(2, taking.getTakingInfoCount());
@@ -107,7 +156,7 @@ public class FighterElixirTest {
         assertEquals(5, c.last(AlchemyNewMakeCostItemNumUpdateResp.class).getCostItem2Nums(0).getValue());
         assertEquals(10, c.last(AlchemyNewMakeCostItemNumUpdateResp.class).getCostItem2Nums(1).getValue());
         h.takeAlchemy(c, AlchemyNewTakingReq.newBuilder().addAlchemyId(20).addAlchemyId(21).build());
-        assertEquals(560, c.last(AlchemyNewTakingResp.class).getExp());
+        assertEquals(5600, c.last(AlchemyNewTakingResp.class).getExp());
         assertNull("斗者不能再次触发第一关的自动升二级", c.last(HeroLevelUpgradeResp.class));
         h.setServerOpenDay(2);
         h.makeAlchemy(c, AlchemyNewMakeReq.getDefaultInstance());
@@ -160,7 +209,7 @@ public class FighterElixirTest {
         new PlayerRuntimeHandler(h).heartbeat(c, HeartbeatReq.getDefaultInstance());
         assertEquals("同一天不重复清空", writes, c.writes.size());
         h.takeAlchemy(c, AlchemyNewTakingReq.newBuilder().addAlchemyId(0).build());
-        assertEquals("跨日保留未服用丹药", 280, c.last(AlchemyNewTakingResp.class).getExp());
+        assertEquals("跨日保留未服用丹药", 2800, c.last(AlchemyNewTakingResp.class).getExp());
         for (int i = 0; i < 11; i++) h.makeAlchemy(c, AlchemyNewMakeReq.getDefaultInstance());
         assertEquals(21, c.last(AlchemyNewMakeResp.class).getMakeTimes());
         assertEquals(11, c.last(AlchemyNewMakeCostItemNumUpdateResp.class).getCostItem2Nums(0).getValue());
@@ -204,6 +253,7 @@ public class FighterElixirTest {
         h.changeAlchemyMaterial(c, 101, 5, 3);
         h.changeAlchemyMaterial(c, 102, 8, 25);
         for (int level = 8; level < 16; level++) {
+            set(h, "heroLevels", c.id, level);
             setExp(h, c.id, PlayerRealmConfig.breakRequiredExp(level) + 1);
             c.writes.clear();
             HeroLevelVo hero;

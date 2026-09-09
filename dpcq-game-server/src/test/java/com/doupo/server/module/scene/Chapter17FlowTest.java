@@ -206,6 +206,31 @@ public class Chapter17FlowTest {
         assertTrue(BattleLogVO.parseFrom(start.getBattleLog().getData()).getEntryListCount() > 10);
     }
 
+    @Test
+    public void chapter15And16BossesRequireThreeWavesAndDoNotInheritUnlock() throws Exception {
+        SceneHandler h = new SceneHandler();
+        Context c = new Context(100000000934L);
+        java.lang.reflect.Field reputation = SceneHandler.class.getDeclaredField("reputationLevels");
+        reputation.setAccessible(true);
+        ((java.util.Map<Long,Integer>) reputation.get(h)).put(c.id, 2);
+        for (int base : new int[] {10300500, 10300600}) {
+            for (int wave = 1; wave <= 3; wave++) {
+                c.writes.clear();
+                h.startMainMapFight(c, MainMapStartFightReq.newBuilder().setMainMapChapterId(base + 5).build());
+                assertTrue("Boss locked before wave " + wave, c.last(MainMapStartFightResp.class) == null);
+                clear(h, c, base + wave);
+                assertEquals(wave + 3, ChapterConfig.get(base + wave).getMonsterCount());
+                assertEquals(wave == 3 ? base + 5 : 0,
+                        c.last(MainMapPassChapterUpdateResp.class).getNextChallengeId());
+            }
+            h.resetGuidanceMainMap(c, GuidanceMainMapResetReq.newBuilder().setEnterNext(true).build());
+            assertEquals(base + 5, c.last(MainMapPassChapterUpdateResp.class).getMainMapChapterId());
+            clear(h, c, base + 5);
+            assertEquals(base + 101, c.last(MainMapPassChapterUpdateResp.class).getMainMapChapterId());
+            assertEquals(0, c.last(MainMapPassChapterUpdateResp.class).getNextChallengeId());
+        }
+    }
+
     static class Context implements IPlayerContext {
         final long id;
         final List<Object> writes = new ArrayList<>();

@@ -78,6 +78,8 @@ public final class CombatSession {
     private boolean paused;
     private boolean playerAttackStarted;
     private boolean ninthBossGuideStarted;
+    private boolean ninthBossGuidePending;
+    private long ninthBossGuideReadyAtMillis;
     private SceneUnitVo ninthBossPlayerSnapshot;
     /** 玩家怒气（放主动技能 10150510101 的条）：攻击命中 +2、挨打 +18、上限 100（抓包 idx 2008-2054）。 */
     private int mp = 0;
@@ -204,10 +206,16 @@ public final class CombatSession {
 
     /** 抓包 idx 8204→8209：第九关首次濒死才触发药老教学。 */
     public boolean tryBeginNinthBossGuide() {
+        return tryBeginNinthBossGuide(System.currentTimeMillis());
+    }
+
+    public boolean tryBeginNinthBossGuide(long nowMillis) {
         if (!active || chapterId != 10200405 || ninthBossGuideStarted
-                || player.getCurrentHp() != 1 || !hasAliveMonster()) {
+                || player.getCurrentHp() != 1 || !hasAliveMonster()
+                || (ninthBossGuidePending && nowMillis < ninthBossGuideReadyAtMillis)) {
             return false;
         }
+        ninthBossGuidePending = false;
         ninthBossGuideStarted = true;
         paused = true;
         return true;
@@ -226,7 +234,7 @@ public final class CombatSession {
     }
 
     public boolean isPaused() {
-        return paused;
+        return paused || ninthBossGuidePending;
     }
 
     public void addMonster(CombatUnit monster) {
@@ -324,7 +332,7 @@ public final class CombatSession {
      * @return 本次推进产生的所有怪物普攻；没有攻击时返回空列表
      */
     public List<MonsterAttack> tick(long nowMillis) {
-        if (!isActive() || paused) {
+        if (!isActive() || isPaused()) {
             return java.util.Collections.emptyList();
         }
 
@@ -377,6 +385,17 @@ public final class CombatSession {
                     definition.rage,
                     state.attackCount);
             attacks.add(attack);
+            if (chapterId == 10200405 && !ninthBossGuideStarted && player.getCurrentHp() == 1) {
+                // 6.9.263 Skill/Skills：508102101的rs=3467ms，508101101的rs=1100ms。
+                // 按UseSkillResp.timeRatio缩放，等旧动画的命中结算完成后才能发教学回血。
+                // 抓包8170→8207也在攻击后摇时恢复；不能与致命50763在同一tick恢复。
+                long recoveryMillis = definition.skillId == 50810210101L ? 3467L : 1100L;
+                ninthBossGuideReadyAtMillis = nowMillis + (long) Math.ceil(recoveryMillis / (double) definition.timeRatio);
+                ninthBossGuidePending = true;
+                LOGGER.info("Ninth boss teaching pending: unit={}, skill={}, hp=1, readyAt={}",
+                        player.getSceneUnitId(), definition.skillId, ninthBossGuideReadyAtMillis);
+                break;
+            }
         }
 
         return attacks;

@@ -9,6 +9,7 @@ import com.doupo.protocol.SceneUnitVo;
 import com.doupo.protocol.SceneUpdateVisibleResp;
 import com.doupo.protocol.SkillContainerVO;
 import com.doupo.server.module.combat.CombatSession;
+import com.doupo.server.module.combat.CombatSessionRegistry;
 import com.doupo.server.module.combat.CombatUnit;
 import org.gaming.fakecmd.side.game.IPlayerContext;
 import org.slf4j.Logger;
@@ -22,8 +23,13 @@ public final class NinthBossGuide {
     }
 
     public static void tryStart(IPlayerContext context, CombatSession session) {
-        if (session.getNinthBossPlayerSnapshot() == null
-                || !session.tryBeginNinthBossGuide()) {
+        tryStart(context, session, System.currentTimeMillis());
+    }
+
+    public static void tryStart(IPlayerContext context, CombatSession session, long nowMillis) {
+        if (CombatSessionRegistry.get(context.getId()) != session
+                || session.getNinthBossPlayerSnapshot() == null
+                || !session.tryBeginNinthBossGuide(nowMillis)) {
             return;
         }
         CombatUnit player = session.getPlayer();

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import com.doupo.protocol.AlchemyNewMakeCostItemNumUpdateResp;
 import com.doupo.protocol.AlchemyNewMakeReq;
 import com.doupo.protocol.AlchemyNewMakeResp;
+import com.doupo.protocol.AlchemyNewMergeResp;
 import com.doupo.protocol.AlchemyNewExpChangeResp;
 import com.doupo.protocol.AlchemyNewLevelUpgradeResp;
 import com.doupo.protocol.HeroLevelUpgradeReq;
@@ -942,9 +943,9 @@ public class SceneHandlerTest {
         assertEquals(1, cost.getCostItem2Nums(0).getValue());
     }
 
-    /** 第二次服用灵液必须匹配抓包 idx 1637 的递增结果。 */
+    /** 未服用首批药丸时再次炼制，必须像官服一样合并四个药槽。 */
     @Test
-    public void secondAlchemyMakeMatchesCapturedResponses() {
+    public void secondAlchemyMakeMergesExistingPills() {
         SceneHandler handler = new SceneHandler();
         RecordingPlayerContext context =
                 new RecordingPlayerContext(100_000_000_001L);
@@ -968,9 +969,15 @@ public class SceneHandlerTest {
         }
         assertEquals(2, make.getMakeTimes());
 
+        AlchemyNewMergeResp merge =
+                (AlchemyNewMergeResp) context.writes.get(2).message;
+        assertEquals(4, merge.getMergesCount());
+        assertEquals(560, merge.getMerges(0).getMake().getExp());
+        assertEquals(2, merge.getMerges(0).getMake().getNum());
+
         AlchemyNewMakeCostItemNumUpdateResp cost =
                 (AlchemyNewMakeCostItemNumUpdateResp)
-                        context.writes.get(2).message;
+                        context.writes.get(3).message;
         assertEquals(2, cost.getCostItem2Nums(0).getValue());
     }
 
@@ -1901,15 +1908,12 @@ public class SceneHandlerTest {
                 0.0001);
 
         makeAlchemyWithInventory(handler, context);
+        context.writes.clear();
         handler.takeAlchemy(context, AlchemyNewTakingReq.newBuilder()
                 .addAlchemyId(24)
                 .addAlchemyId(25)
                 .addAlchemyId(26)
                 .build());
-        context.writes.clear();
-        handler.upgradeHeroLevel(
-                context,
-                HeroLevelUpgradeReq.newBuilder().setHeroIndex(0).build());
         HeroLevelUpgradeResp threeStar = null;
         for (RecordedWrite write : context.writes) {
             if (write.protocolId == 75057) {

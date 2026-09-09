@@ -763,6 +763,15 @@ message AlchemyNewMakeResp {
     int32 source = 3;
 }
 
+message AlchemyNewMergeVo {
+    AlchemyNewMakeVo make = 1;
+    repeated int64 use_ids = 2;
+}
+
+message AlchemyNewMergeResp {
+    repeated AlchemyNewMergeVo merges = 1;
+}
+
 message IntegerAndLongPairEntry {
     int32 key = 1;
     int64 value = 2;

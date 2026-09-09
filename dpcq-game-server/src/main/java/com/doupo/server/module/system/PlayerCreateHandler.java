@@ -205,19 +205,21 @@ public class PlayerCreateHandler {
                 }),
                 0);
 
-        context.write(
-                61951,
-                MainMapChapterInfoResp.newBuilder()
-                        .setMainMapChapterId(10100101)
-                        .setHasReward(true)
-                        .setLoseBackId(10100101)
-                        .build(),
-                0);
+        if (!sceneHandler.initializeChapter9Test(context)) {
+            context.write(
+                    61951,
+                    MainMapChapterInfoResp.newBuilder()
+                            .setMainMapChapterId(10100101)
+                            .setHasReward(true)
+                            .setLoseBackId(10100101)
+                            .build(),
+                    0);
 
-        context.write(
-                50367,
-                PlayerGuideSaveResp.getDefaultInstance(),
-                0);
+            context.write(
+                    50367,
+                    PlayerGuideSaveResp.getDefaultInstance(),
+                    0);
+        }
 
         context.write(
                 50353,

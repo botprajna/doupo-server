@@ -466,22 +466,30 @@ final class ChapterConfig {
                         boss(100127, 1005601L, 3500, 50000, 50000,
                                 100200, 10))));
 
-        // 15–17 关：关卡、怪物及属性均来自本次战报；18 关第一波仅作通关落点。
-        for (int stage = 5; stage <= 7; stage++) {
+        // 15–20 关：逐波战报及场景切换字段来自第二次抓包，不用占位波次。
+        for (int stage = 5; stage <= 10; stage++) {
             int base = 10300000 + stage * 100;
-            int[] tasks = { 200038, 200102, 200104 };
+            int[] tasks = { 200038, 200102, 200104, 0, 200108, 200110 };
             for (int wave : new int[] { 1, 2, 3, 5 }) {
                 int id = base + wave;
-                int next = wave == 5 ? base + 101 : wave == 3 ? base + 1 : id + 1;
+                int next = wave == 5 ? (stage == 10 ? 10400101 : base + 101) : wave == 3 ? base + 1 : id + 1;
+                int loseBack = stage <= 6 ? 10300401 : 10300601;
+                int stageTime = stage <= 6 ? 6 : 10;
+                if (stage >= 8) {
+                    com.fasterxml.jackson.databind.JsonNode transition = Chapter17Data.row("transitions", "chapterId", id);
+                    loseBack = transition.path("loseBackId").asInt();
+                    stageTime = transition.path("stageTime").asInt();
+                }
                 chapters.put(id, new Chapter(id, next, wave == 5,
-                        stage <= 6 ? 10300401 : 10300601, stage <= 6 ? 6 : 10,
+                        loseBack, stageTime,
                         wave == 5 ? tasks[stage - 5] : 0,
                         261 + (stage - 5) * 16 + (wave == 1 ? 0 : wave == 2 ? 4 : wave == 3 ? 9 : 15),
                         capturedMonsters(id)));
             }
         }
-        chapters.put(10300801, new Chapter(10300801, 0, false, 10300701,
-                7, 0, 309, capturedMonsters(10300801)));
+        // 本次抓包到21关首波为止；不声称其后的战斗已实现。
+        chapters.put(10400101, new Chapter(10400101, 0, false, 10300901,
+                9, 0, 357, capturedMonsters(10400101)));
 
         return Collections.unmodifiableMap(chapters);
     }

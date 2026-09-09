@@ -9,9 +9,14 @@ import java.io.InputStream;
 /** Checked-in, reproducible local capture/Luban exports; never fetch from the official server. */
 final class Chapter17Data {
     static final JsonNode DATA = readConfig();
+    static final JsonNode COMMON_SKILLS = readConfig("common-skills.json");
+    static final JsonNode CONTINUATION = readConfig("continuation.json");
 
     static JsonNode row(String table, String key, int id) {
         for (JsonNode row : DATA.path(table)) {
+            if (row.path(key).asInt() == id) return row;
+        }
+        for (JsonNode row : CONTINUATION.path(table)) {
             if (row.path(key).asInt() == id) return row;
         }
         throw new IllegalArgumentException("Missing verified " + table + ": " + id);
@@ -25,8 +30,12 @@ final class Chapter17Data {
     }
 
     private static JsonNode readConfig() {
+        return readConfig("config.json");
+    }
+
+    private static JsonNode readConfig(String name) {
         try {
-            return new ObjectMapper().readTree(bytes("config.json").toByteArray());
+            return new ObjectMapper().readTree(bytes(name).toByteArray());
         } catch (IOException e) { throw new IllegalStateException(e); }
     }
 }

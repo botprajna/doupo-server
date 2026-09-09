@@ -1,3 +1,5 @@
+param([switch]$Chapter9Test)
+
 $ErrorActionPreference = "Stop"
 
 . "$PSScriptRoot\dev-env.ps1"
@@ -154,7 +156,13 @@ if ($httpPids.Count -gt 0 -or $webSocketPids.Count -gt 0) {
         throw "Ports 18080/19090 are occupied by another process. PID: $existingGamePid."
     }
 
+    if ($Chapter9Test -and $existingProcess.CommandLine -notlike '*--game.test.chapter9-start=true*') {
+        throw "The running server is not in Chapter 9 test mode. Stop that game server first, then rerun with -Chapter9Test."
+    }
     Write-Host "Game server is already running. PID: $existingGamePid (no duplicate started)" -ForegroundColor Green
+    if ($existingProcess.CommandLine -like '*--game.test.chapter9-start=true*') {
+        Write-Warning "Chapter 9 TEST mode is active. New player initialization starts at chapter 9."
+    }
     Write-Host "HTTP: 127.0.0.1:18080"
     Write-Host "WebSocket: 127.0.0.1:19090"
     exit 0
@@ -169,7 +177,12 @@ Write-Host "Starting game server on ports 18080/19090..." -ForegroundColor Yello
 # 由 Windows WMI 创建独立进程，避免随调用终端/工具的进程树一起退出。
 # cmd 仅负责日志重定向；不安装计划任务或后台服务。
 $startupInfo = New-CimInstance -ClassName Win32_ProcessStartup -ClientOnly -Property @{ ShowWindow = [uint16]0 }
-$launchCommand = '"{0}" /d /s /c ""{1}" -jar "{2}" 1>"{3}" 2>"{4}""' -f $env:ComSpec, $javaExe, $gameJar, $outputLog, $errorLog
+$testArgument = ''
+if ($Chapter9Test) {
+    $testArgument = ' --game.test.chapter9-start=true'
+    Write-Warning "Chapter 9 TEST mode: each player creation resets to the captured chapter 9 checkpoint."
+}
+$launchCommand = '"{0}" /d /s /c ""{1}" -jar "{2}"{5} 1>"{3}" 2>"{4}""' -f $env:ComSpec, $javaExe, $gameJar, $outputLog, $errorLog, $testArgument
 $launchResult = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{
     CommandLine = $launchCommand
     CurrentDirectory = $PSScriptRoot

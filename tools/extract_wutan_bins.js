@@ -29,7 +29,7 @@ function hexToBuf(hex) {
 }
 
 function main() {
-  const schema = new Schema();
+  const schema = new Schema('D:/doudi-resources/client-analysis/decompiled-gameplay-runtime-6.9.263');
   schema.load();
   const decoder = new Decoder(schema);
   const har = JSON.parse(fs.readFileSync(HAR, "utf8"));

@@ -175,6 +175,31 @@ message CommonSkillLevelUpResp {
     int32 new_level = 3;
 }
 
+message CommonSkillPutOnReq {
+    enum Proto { UNKNOWN = 0; ID = 82052; }
+    repeated IntegerAndIntegerPairEntry slot_and_skill_id = 1;
+}
+
+message CommonSkillPutOnResp {
+    enum Proto { UNKNOWN = 0; ID = 82055; }
+    repeated IntegerAndIntegerPairEntry slot_and_skill_id = 1;
+}
+
+message CommonSkillLevelUpReq {
+    enum Proto { UNKNOWN = 0; ID = 82053; }
+    int32 common_skill_id = 1;
+}
+
+message CommonSkillOneKeyLevelUpReq {
+    enum Proto { UNKNOWN = 0; ID = 82054; }
+}
+
+message CommonSkillOneKeyLevelUpResp {
+    enum Proto { UNKNOWN = 0; ID = 82057; }
+    repeated IntegerAndIntegerPairEntry old_skill_level = 1;
+    repeated IntegerAndIntegerPairEntry new_skill_level = 2;
+}
+
 message ChangeFightValueActionVO {
     enum Proto { UNKNOWN = 0; ID = 50835; }
     int32 change_value = 1;

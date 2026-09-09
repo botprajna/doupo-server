@@ -13,9 +13,15 @@ final class Chapter17Progress {
     final Set<Integer> bossRewarded = new HashSet<>();
     final Map<Integer, Long> items = new HashMap<>();
     final Map<Integer, Long> currencies = new HashMap<>();
+    final Map<Integer, Integer> commonSkillLevels = new java.util.TreeMap<>();
+    final Map<Integer, Integer> commonSkillSlots = new java.util.TreeMap<>();
+    final Map<Integer, com.doupo.protocol.UpdateItem> commonSkillItems = new java.util.TreeMap<>();
     boolean arrivedSixteen;
     int watchedEquips;
     boolean commonDrawn;
+    boolean continuationDrawn;
+    String playerName;
+    long taskEquipMaterialConsumed;
     boolean towerOpen;
     boolean towerCG;
     int towerPass;

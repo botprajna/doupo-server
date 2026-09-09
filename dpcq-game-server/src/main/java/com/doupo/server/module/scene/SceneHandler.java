@@ -4,6 +4,8 @@ import com.doupo.protocol.AlchemyNewMakeCostItemNumUpdateResp;
 import com.doupo.protocol.AlchemyNewMakeReq;
 import com.doupo.protocol.AlchemyNewMakeResp;
 import com.doupo.protocol.AlchemyNewMakeVo;
+import com.doupo.protocol.AlchemyNewMergeResp;
+import com.doupo.protocol.AlchemyNewMergeVo;
 import com.doupo.protocol.AlchemyNewExpChangeResp;
 import com.doupo.protocol.AlchemyNewLevelUpgradeResp;
 import com.doupo.protocol.AlchemyNewTakingReq;
@@ -315,6 +317,7 @@ public class SceneHandler {
     private static final class AlchemyState {
         private final Map<Integer, UpdateItem> materials = new HashMap<>();
         private final Map<Long, AlchemyNewMakeVo> products = new HashMap<>();
+        private final Map<Long, Integer> productKinds = new HashMap<>();
         private final Map<Integer, Long> dailyCosts = new java.util.TreeMap<>();
         private final Map<Integer, Integer> takingCounts = new java.util.TreeMap<>();
         private java.time.LocalDate costDay;
@@ -428,7 +431,12 @@ public class SceneHandler {
     private final Set<Long> bagModulesOpened = ConcurrentHashMap.newKeySet();
 
     /** 当前本地客户端初始化回到第一关，相关临时状态必须同步回到初始值。 */
+    @org.springframework.beans.factory.annotation.Value("${game.test.chapter9-start:false}")
+    private boolean chapter9TestEnabled;
+    private final Set<Long> chapter9TestPlayers = ConcurrentHashMap.newKeySet();
+
     public void resetTutorialPlayer(long playerId) {
+        chapter9TestPlayers.remove(playerId);
         CombatSessionRegistry.clear(playerId);
         guidanceStates.remove(playerId);
         currentWaves.remove(playerId);
@@ -559,6 +567,109 @@ public class SceneHandler {
             tryFinishAcceptedMainTask(context, 200028, 1);
         }
         refreshChapter17Tasks(context);
+    }
+
+    /** Explicit, reversible test start; called once after reset and before PlayerInitEnd. */
+    public boolean initializeChapter9Test(IPlayerContext context) {
+        if (!chapter9TestEnabled) return false;
+        long id = context.getId();
+        if (!chapter9TestPlayers.add(id)) return true;
+        long now = System.currentTimeMillis();
+        heroLevels.put(id, Chapter9TestCheckpoint.LEVEL);
+        heroStages.put(id, 1);
+        playerFightForce.put(id, (double) Chapter9TestCheckpoint.POWER);
+        grantPlayerStats(id, Chapter9TestCheckpoint.ATTACK, Chapter9TestCheckpoint.HP);
+        FIRST_SKILL_STAR_PLAYERS.add(id);
+        THIRD_SKILL_STAR_PLAYERS.add(id);
+        finishedArriveChapter6.add(id);
+        sixthRealmTaskPlayers.add(id);
+        crisisEvent20010Rewarded.add(id);
+        for (int boss : Chapter9TestCheckpoint.PASSED_BOSSES) markChapterPassed(id, boss);
+        guidanceStates.put(id, new GuidanceState(Chapter9TestCheckpoint.CHAPTER));
+
+        alchemyExpPools.put(id, 10L); // idx 6710, after the level-7 upgrade
+        alchemyLevels.put(id, 1);
+        alchemyMakeTimes.put(id, 4);
+        alchemyTakingCounts.put(id, 16);
+        nextAlchemyId.put(id, 17);
+        AlchemyState alchemy = new AlchemyState();
+        alchemy.costDay = alchemyNow().atZone(java.time.ZoneId.of("Asia/Shanghai")).toLocalDate();
+        alchemy.dailyCosts.put(101, 4L);
+        alchemy.takingCounts.put(1, 1);
+        alchemy.takingCounts.put(1101, 16);
+        alchemyStates.put(id, alchemy);
+        context.write(75060, AlchemyNewExpChangeResp.newBuilder().setExp(10).setLevel(1).build(), 0);
+        writeAlchemyCosts(context, alchemy);
+        writeAllHeroLevelInfo(context);
+
+        ModuleNewOpenResp.Builder modules = ModuleNewOpenResp.newBuilder();
+        for (int module : Chapter9TestCheckpoint.MODULES) modules.addOpens(module);
+        context.write(50852, modules.build(), 0);
+        HeroSkillSkillUpdateResp.Builder learned = HeroSkillSkillUpdateResp.newBuilder();
+        for (int skill : Chapter9TestCheckpoint.SKILLS) {
+            activatedSkills(id).add((long) skill);
+            noteLearnedSkill(id, skill, 2, 12);
+            learned.addPlayerSkillUpdates(PlayerSkillVo.newBuilder().setBaseId(skill)
+                    .addHeroSkills(PlayerHeroSkillVo.newBuilder().setHeroIdx(-1)
+                            .setHeroSkill(SkillVo.newBuilder().setBaseId(skill).setStar(2))));
+        }
+        context.write(75046, learned.build(), 0);
+        persistSkillSchema(id, HeroSkillSchemaUpdateReq.newBuilder().setHeroIndex(0)
+                .addSkills(intPair(2001, 80128011)).addSkills(intPair(1001, 100001)).build());
+        HeroSkillSchemaVo.Builder schema = HeroSkillSchemaVo.newBuilder().setId(1)
+                .setActiveTime(schemaActiveTime(id)).setActive(true)
+                .addAllSlot2SkillBaseIds(heroSkillSchemas.get(id).slots);
+        context.write(75001, com.doupo.protocol.HeroSkillInfoResp.newBuilder()
+                .addHeroVoList(com.doupo.protocol.HeroSkillVo.newBuilder().setHeroIndex(0)
+                        .setCurSchemaId(1).setSkillStarTotalMaxHis(12)
+                        .addSlots(HeroSkillSlotVo.newBuilder().setId(1001).setAnyOnSkill(true))
+                        .addSlots(HeroSkillSlotVo.newBuilder().setId(2001).setAnyOnSkill(true))
+                        .addSlots(HeroSkillSlotVo.newBuilder().setId(3001))
+                        .addSchemas(schema)
+                        .addSchemas(HeroSkillSchemaVo.newBuilder().setId(2).setActiveTime(now / 1000 + 2).setActive(true))
+                        .addSchemas(HeroSkillSchemaVo.newBuilder().setId(3))).build(), 0);
+        unlockedHeroSkillSlots.computeIfAbsent(id, ignored -> ConcurrentHashMap.newKeySet()).add(3001);
+        context.write(52351, PlayerFightForceResp.newBuilder().setPlayerFightForce(Chapter9TestCheckpoint.POWER).build(), 0);
+        context.write(75151, HeroFightForceResp.newBuilder().addHeroVoList(HeroFightForceVo.newBuilder()
+                .setHeroIndex(0).setFightForce(Chapter9TestCheckpoint.POWER)).build(), 0);
+        context.write(50455, HeroStatUpdateResp.newBuilder().setHeroVo(HeroStatVo.newBuilder()
+                .setHeroIndex(0).addStats(stat(101001, Chapter9TestCheckpoint.ATTACK))
+                .addStats(stat(102001, Chapter9TestCheckpoint.DEFENSE))
+                .addStats(stat(103001, Chapter9TestCheckpoint.HP))
+                .addStats(stat(107002, 64)).addStats(stat(104001, 100))
+                .addStats(stat(105001, 1)).addStats(stat(106001, 1))).build(), 0);
+
+        PackUpdateVo.Builder items = PackUpdateVo.newBuilder().setPackType(1)
+                .addUpdateItems(changeNewFightSkillEnergy(context, 29, 11, now)); // idx 7324
+        for (int[] item : Chapter9TestCheckpoint.ITEMS) {
+            LotteryItemStack stack = new LotteryItemStack(item[0], item[1], item[2], id * 1000 + item[0], now);
+            lotteryStacks(id).put(item[0], stack);
+            items.addUpdateItems(lotteryUpdateItem(stack));
+        }
+        lotteryNextItemIndex.put(id, 20);
+        context.write(50401, PackInfoResp.newBuilder().addPacks(items).build(), 0);
+        newFightSkillLotteryDrawTimes.put(id, 12);
+        newFightSkillLotteryStage.put(id, 2);
+        context.write(77354, buildUpgradedLotteryInfo(12, 2).toBuilder()
+                .setNewFightSkillLotteryVo(NewFightSkillLotteryVo.newBuilder().setShowStage(2)
+                        .addShowStage2DrawCountInfoList(intPair(1, 5))
+                        .addShowStage2DrawCountInfoList(intPair(2, 7))).build(), 0);
+        acceptNextMainTask(context, 200023); // idx 7328, ninth-boss task follows the draw
+        context.write(61951, MainMapChapterInfoResp.newBuilder()
+                .setMainMapChapterId(Chapter9TestCheckpoint.CHAPTER).setHasReward(true)
+                .setStageTime(12).setLastStageTime(10).setLoseBackId(10200301)
+                .setHistoryTopId(10200305).build(), 0);
+        com.doupo.protocol.PlayerGuideSaveResp.Builder guides = com.doupo.protocol.PlayerGuideSaveResp.newBuilder();
+        for (int[] guide : Chapter9TestCheckpoint.GUIDES) guides.addGuideGroupAndIdPairList(intPair(guide[0], guide[1]));
+        context.write(50367, guides.build(), 0);
+        LOGGER.warn("Chapter 9 TEST checkpoint initialized: player={}, chapter={}, level={}, hp={}, attack={}",
+                id, Chapter9TestCheckpoint.CHAPTER, Chapter9TestCheckpoint.LEVEL,
+                Chapter9TestCheckpoint.HP, Chapter9TestCheckpoint.ATTACK);
+        return true;
+    }
+
+    private static IntegerAndIntegerPairEntry intPair(int key, int value) {
+        return IntegerAndIntegerPairEntry.newBuilder().setKey(key).setValue(value).build();
     }
 
     public static ChangeSceneResp initialScene() {
@@ -986,11 +1097,18 @@ public class SceneHandler {
         com.fasterxml.jackson.databind.JsonNode product = Chapter17Data.row("elixirAccumulate", "Key", rid);
         int exp = product.path("Exp").asInt();
         int qlt = product.path("Quality").asInt();
+        List<AlchemyNewMakeVo> mergeRoots = state.products.values().stream()
+                .filter(pill -> state.productKinds.getOrDefault(
+                        pill.getId(), pill.getRid()) == rid)
+                .sorted(java.util.Comparator.comparingLong(AlchemyNewMakeVo::getId))
+                .limit(count)
+                .collect(java.util.stream.Collectors.toList());
         context.write(50402, packUpdate(75052, changeAlchemyMaterial(context, itemId, -cost, 0)), 0);
         AlchemyNewMakeResp.Builder make =
                 AlchemyNewMakeResp.newBuilder()
                         .setMakeTimes(makeTimes)
                         .setSource(0);
+        List<AlchemyNewMakeVo> made = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             int id = nextId + i;
             AlchemyNewMakeVo pill = AlchemyNewMakeVo.newBuilder()
@@ -1001,10 +1119,31 @@ public class SceneHandler {
                     .setNum(1)
                     .setRate(0).build();
             state.products.put((long) id, pill);
+            state.productKinds.put((long) id, rid);
             make.addMakeIds(pill);
+            made.add(pill);
         }
         nextAlchemyId.put(playerId, nextId + count);
         context.write(75053, make.build(), 0);
+        if (mergeRoots.size() == count) {
+            AlchemyNewMergeResp.Builder response = AlchemyNewMergeResp.newBuilder();
+            for (int i = 0; i < count; i++) {
+                AlchemyNewMakeVo root = mergeRoots.get(i);
+                AlchemyNewMakeVo consumed = made.get(i);
+                AlchemyNewMakeVo merged = root.toBuilder()
+                        .setRid(0)
+                        .setExp(Math.addExact(root.getExp(), consumed.getExp()))
+                        .setNum(Math.addExact(root.getNum(), consumed.getNum()))
+                        .build();
+                state.products.put(root.getId(), merged);
+                state.products.remove(consumed.getId());
+                state.productKinds.remove(consumed.getId());
+                response.addMerges(AlchemyNewMergeVo.newBuilder()
+                        .setMake(merged)
+                        .addUseIds(consumed.getId()));
+            }
+            context.write(75068, response.build(), 0);
+        }
 
         state.dailyCosts.put(itemId, used + cost);
         writeAlchemyCosts(context, state);
@@ -1080,6 +1219,7 @@ public class SceneHandler {
             if (pill == null) {
                 continue;
             }
+            state.productKinds.remove(alchemyId);
             takingIds.add(alchemyId);
             takingCount++;
             state.takingCounts.merge(pill.getRid(), 1, Integer::sum);
@@ -1242,6 +1382,7 @@ public class SceneHandler {
             writeEighthLevelBreakUpdates(context, heroIndex, sceneUnitId);
         } else if (shortInfoLevel >= 8) {
             writeFighterRealmStats(context, heroIndex, sceneUnitId, shortInfoLevel);
+            tryAutoStepUpgradeAfterExp(context);
         } else if (shortInfoLevel >= THIRD_SKILL_SLOT_UNLOCK_LEVEL) {
             pushThirdSkillSlotUnlock(context, heroIndex);
         }
@@ -2304,6 +2445,14 @@ public class SceneHandler {
         tryRefreshFirstCharge(context);
         SceneUpdateVisibleResp snapshot = overlayVisibleHeroLevel(
                 visibleSnapshot(context.getId()), context.getId());
+        if (chapter9TestPlayers.contains(context.getId())) {
+            SceneUnitVo player = checkpointPlayerUnit(snapshot.getVisibleList(0), context.getId());
+            snapshot = snapshot.toBuilder().setVisibleList(0, player).build();
+            context.write(50790, SyncNonSceneHeroVoUpdateResp.newBuilder()
+                    .addVoList(checkpointPlayerUnit(buildPlayerUnit(context.getId(), false), context.getId()))
+                    .setOperationType(ServerVoUpdateType.ALL).build(), 0);
+            writeEquippedActiveSkills(context);
+        }
         if (request.getMapId() == 2 && hasPassedChapter(context.getId(), 10200505)) {
             GuidanceState state = guidanceStates.get(context.getId());
             // 乌坦城小怪和 Boss 都走 61971 战报，地图加载不要改成场地战斗。
@@ -2717,8 +2866,7 @@ public class SceneHandler {
         long playerId = context.getId();
         int currentLevel = heroLevels.getOrDefault(playerId, 2);
         int currentStage = heroStages.getOrDefault(playerId, 1);
-        while (currentLevel < 8
-                && !PlayerRealmConfig.needLevelBreak(currentLevel)
+        while (!PlayerRealmConfig.needLevelBreak(currentLevel)
                 && !PlayerRealmConfig.atStageCap(currentLevel, currentStage)
                 && alchemyExpPools.getOrDefault(playerId, 0L)
                         >= PlayerRealmConfig.breakRequiredExp(currentLevel)) {
@@ -3832,6 +3980,9 @@ public class SceneHandler {
                     .toBuilder();
             playerSnapshot.getHeroVoBuilder().setCrossHeroShortInfo(
                     currentHeroShortInfo(context.getId()));
+            if (chapter9TestPlayers.contains(context.getId())) {
+                playerSnapshot = checkpointPlayerUnit(playerSnapshot.build(), context.getId()).toBuilder();
+            }
             session.setNinthBossPlayerSnapshot(playerSnapshot.build());
         }
 
@@ -3895,6 +4046,18 @@ public class SceneHandler {
                 && reputationLevels.getOrDefault(context.getId(), 0) < 2) {
             LOGGER.info("Chapter locked by reputation: player={}, chapter={}", context.getId(), chapter.getChapterId());
             return;
+        }
+        if (chapter.getChapterId() >= 10400101 && reputationLevels.getOrDefault(context.getId(), 0) < 3) return;
+
+        if (chapter.isBoss() && chapter.getChapterId() >= 10300505) {
+            int firstWave = chapter.getChapterId() - 4;
+            GuidanceState current = guidanceStates.get(context.getId());
+            boolean selectedBoss = current != null && current.chapterId == chapter.getChapterId();
+            if (!selectedBoss && bossUnlockedWave.getOrDefault(context.getId(), 0) != firstWave) {
+                LOGGER.warn("Boss request before three waves cleared: player={}, chapter={}",
+                        context.getId(), chapter.getChapterId());
+                return;
+            }
         }
 
         CombatSessionRegistry.clear(context.getId());
@@ -4954,14 +5117,14 @@ public class SceneHandler {
     private static boolean isWutanWave(int chapterId) {
         int stage = chapterId % 10;
         return chapterId >= 10300101
-                && chapterId <= 10300703
+                && chapterId <= 10301003
                 && stage >= 1
                 && stage <= 3;
     }
 
     /** 乌坦城本章（三波 + Boss，第11–14关）。 */
     private static boolean isWutanChapter(int chapterId) {
-        return chapterId >= 10300101 && chapterId <= 10300801
+        return chapterId >= 10300101 && chapterId <= 10400101
                 && ChapterConfig.get(chapterId) != null;
     }
 
@@ -5363,7 +5526,7 @@ public class SceneHandler {
             TaskRewardReq request) {
         int taskId = rewardTaskId(context, request);
         if (taskId >= 200035 && taskId <= 200038
-                || taskId >= 200100 && taskId <= 200104 || taskId == 200111) {
+                || taskId >= 200100 && taskId <= 200111) {
             rewardChapter17Task(context, taskId);
             return;
         }
@@ -5852,6 +6015,113 @@ public class SceneHandler {
         return mainEquipStates.computeIfAbsent(playerId, ignored -> new MainEquipState());
     }
 
+    /** 6.9 MainEquipModel.CalculateLevelUp：下一等级条件、当前等级经验、下一个 Mark。 */
+    @PlayerCmd
+    public void levelUpMainEquip(IPlayerContext context, com.doupo.protocol.MainEquipLevelUpReq request) {
+        Map<Integer, MainEquipSlotVO> slots = mainEquipState(context.getId()).heroes.get(request.getHeroIndex());
+        if (slots == null) return;
+        MainEquipSlotVO before = slots.get(request.getPosition());
+        if (before == null || !before.hasVo()) return;
+        int level = before.getLevel();
+        int max = Chapter17Data.row("mainEquips", "Id", before.getVo().getEquipId()).path("MaxLevel").asInt();
+        int target = level + 1;
+        if (request.getQuickUpgrade()) {
+            target = max;
+            for (com.fasterxml.jackson.databind.JsonNode row : Chapter17Data.CONTINUATION.path("equipStrengthNeed")) {
+                if (row.path("Level").asInt() > level && row.path("Mark").asInt() == 1) {
+                    target = Math.min(target, row.path("Level").asInt());
+                }
+            }
+        }
+        com.fasterxml.jackson.databind.JsonNode material = Chapter17Data.CONTINUATION.path("equipStrengthMaterial").get(0);
+        int itemId = material.path("ItemId").asInt();
+        long available = chapter17ItemCount(context, itemId);
+        long spent = 0;
+        long exp = before.getExp();
+        while (level < Math.min(max, target)) {
+            com.fasterxml.jackson.databind.JsonNode next = Chapter17Data.row("equipStrengthNeed", "Level", level + 1);
+            boolean allowed = true;
+            for (com.fasterxml.jackson.databind.JsonNode condition : next.path("Condition")) {
+                if (!"HERO_LEVEL_CONDITION".equals(condition.path("Type").asText())
+                        || heroLevels.getOrDefault(context.getId(), 2) < condition.path("Context").path("Level").asInt()) {
+                    allowed = false;
+                }
+            }
+            long cost = Math.max(0, Chapter17Data.row("equipStrengthNeed", "Level", level).path("Exp").asLong() - exp);
+            if (!allowed || material.path("Exp").asInt() != 1 || cost > available - spent) break;
+            spent += cost;
+            level++;
+            exp = 0;
+        }
+        if (level == before.getLevel()) return;
+        MainEquipSlotVO updated = before.toBuilder().setLevel(level).setExp(exp)
+                .setVo(before.getVo().toBuilder().setLevel(level).setExp(exp)).build();
+        if (spent > 0) context.write(50402, packUpdate(75355, changeChapter17Item(context, itemId, -spent)), 0);
+        slots.put(request.getPosition(), updated);
+        context.write(75358, com.doupo.protocol.MainEquipLevelUpResp.newBuilder().setHeroIndex(request.getHeroIndex())
+                .setPosition(request.getPosition()).setVo(updated).build(), 0);
+        context.write(75356, MainEquipPositionInfoResp.newBuilder().setHeroIndex(request.getHeroIndex())
+                .setPosition(request.getPosition()).setVo(updated).build(), 0);
+        Chapter17Progress state = later(context.getId());
+        if (state.tasks.contains(200106) && !state.rewarded.contains(200106)) {
+            state.taskEquipMaterialConsumed = Math.min(10, state.taskEquipMaterialConsumed + spent);
+        }
+        refreshChapter17Tasks(context);
+        LOGGER.info("MainEquip strengthened: player={}, slot={}, level={}->{}, materialConsumed={}",
+                context.getId(), request.getPosition(), before.getLevel(), level, spent);
+    }
+
+    /** 抓包75390→75354(type=2)→50402→75391；只分解自己包内未锁定的装备。 */
+    @PlayerCmd
+    public void decomposeMainEquip(IPlayerContext context, com.doupo.protocol.MainEquipDecomposeReq request) {
+        MainEquipState state = mainEquipState(context.getId());
+        Set<Long> ids = new java.util.LinkedHashSet<>(request.getObjectIdsList());
+        long amount = 0;
+        for (long id : ids) {
+            MainEquipVO equip = state.bag.get(id);
+            if (equip == null || equip.getLock()) return;
+            amount += Chapter17Data.row("mainEquips", "Id", equip.getEquipId()).path("DecomposeExp").asLong();
+        }
+        if (ids.isEmpty() || amount <= 0) return;
+        int itemId = Chapter17Data.CONTINUATION.path("equipStrengthMaterial").get(0).path("ItemId").asInt();
+        UpdateItem material = changeChapter17Item(context, itemId, amount);
+        for (long id : ids) state.bag.remove(id);
+        context.write(75354, MainEquipBagReduceResp.newBuilder().setType(2).addAllReduceList(ids).build(), 0);
+        context.write(50402, packUpdate(75354, material), 0);
+        context.write(75391, com.doupo.protocol.MainEquipDecomposeResp.newBuilder().addAllObjectIds(ids)
+                .setClientParam(request.getClientParam()).addAssetList(RewardItemVo.newBuilder()
+                        .setItemKey(itemId).setAmount(amount)).build(), 0);
+    }
+
+    private long chapter17ItemCount(IPlayerContext context, int itemId) {
+        UpdateItem item = context instanceof com.doupo.server.foundation.player.PlayerConnectionContext
+                ? ((com.doupo.server.foundation.player.PlayerConnectionContext) context).itemStack(itemId) : null;
+        return item == null ? later(context.getId()).items.getOrDefault(itemId, 0L) : item.getPackItem().getSize();
+    }
+
+    /** 抓包10436–10440：普通改名消费改名卡，成功后才推进200105。 */
+    @PlayerCmd
+    public void changePlayerName(IPlayerContext context, com.doupo.protocol.ChangeNameReq request) {
+        if (request.getOpType() != 0) return;
+        int maxLength = 0;
+        com.fasterxml.jackson.databind.JsonNode cost = null;
+        for (com.fasterxml.jackson.databind.JsonNode row : Chapter17Data.CONTINUATION.path("nameSettings")) {
+            if ("word.maxNameLength".equals(row.path("Id").asText())) maxLength = row.path("IntValue").asInt();
+            if ("changeNameConsumeResource".equals(row.path("Id").asText())) cost = row.path("AssetValue").get(0);
+        }
+        String name = request.getName();
+        Chapter17Progress state = later(context.getId());
+        if (name.trim().isEmpty() || name.length() > maxLength || name.equals(state.playerName)
+                || name.chars().anyMatch(c -> Character.isDigit(c) || Character.isISOControl(c)) || cost == null) return;
+        int itemId = cost.path("Id").asInt();
+        long amount = cost.path("Amount").asLong();
+        if (amount <= 0 || chapter17ItemCount(context, itemId) < amount) return;
+        context.write(50402, packUpdate(51351, changeChapter17Item(context, itemId, -amount)), 0);
+        state.playerName = name;
+        context.write(51352, com.doupo.protocol.ChangeNameResp.newBuilder().setPlayerId(context.getId()).setName(name).build(), 0);
+        refreshChapter17Tasks(context);
+    }
+
     MainEquipInfoResp mainEquipInfo(long playerId) {
         MainEquipState state = mainEquipState(playerId);
         MainEquipInfoResp.Builder info = MainEquipInfoResp.newBuilder()
@@ -5925,6 +6195,13 @@ public class SceneHandler {
             openReputationTwoTasks(context);
         } else {
             refreshChapter17Tasks(context);
+            GuidanceState current = guidanceStates.get(playerId);
+            if (nextLevel == 3 && hasPassedChapter(playerId, 10301005) && current != null
+                    && current.chapterId >= 10301001 && current.chapterId <= 10301005) {
+                context.write(61952, MainMapPassChapterUpdateResp.newBuilder().setMainMapChapterId(current.chapterId)
+                        .setNextChallengeId(10400101).setHistoryTopId(10301005).setLoseBackId(10300901)
+                        .setStageTime(9).setLastStageTime(8).setChangeReason(4).build(), 0);
+            }
         }
     }
 
@@ -7250,6 +7527,14 @@ public class SceneHandler {
 
         ChapterConfig.Chapter bossChapter;
         int currentId = cleared.getChapterId();
+        if (currentId >= 10301001 && currentId <= 10301005 && hasPassedChapter(context.getId(), 10301005)) {
+            if (reputationLevels.getOrDefault(context.getId(), 0) >= 3) {
+                context.write(61952, chapterEntered(ChapterConfig.get(10400101), 10301005), 0);
+                guidanceStates.put(context.getId(), new GuidanceState(10400101));
+                bossUnlockedWave.remove(context.getId());
+            }
+            return;
+        }
         if (currentId >= 10300501 && currentId <= 10300505
                 && hasPassedChapter(context.getId(), 10300505)) {
             if (reputationLevels.getOrDefault(context.getId(), 0) >= 2) {
@@ -8086,6 +8371,12 @@ public class SceneHandler {
             case 200102: return hasPassedChapter(playerId, 10300605) ? 1 : 0;
             case 200103: return state.commonDrawn ? 1 : 0;
             case 200104: return hasPassedChapter(playerId, 10300705) ? 1 : 0;
+            case 200105: return state.playerName == null ? 0 : 1;
+            case 200106: return Math.min(state.taskEquipMaterialConsumed, 10);
+            case 200107: return state.continuationDrawn ? 1 : 0;
+            case 200108: return hasPassedChapter(playerId, 10300905) ? 1 : 0;
+            case 200109: return heroLevels.getOrDefault(playerId, 2) >= 17 ? 1 : 0;
+            case 200110: return hasPassedChapter(playerId, 10301005) ? 1 : 0;
             case 200111: return reputationLevels.getOrDefault(playerId, 0);
             default: return 0;
         }
@@ -8121,19 +8412,25 @@ public class SceneHandler {
             context.write(50852, ModuleNewOpenResp.newBuilder().addOpens(4601).addOpens(1641).addOpens(1642).build(), 0);
             context.write(77354, parseLotteryInfo("10136-77354.bin"), 0);
             context.write(50402, packUpdate(50851, changeChapter17Item(context, 100212, 10)), 0);
-            context.write(82051, com.doupo.protocol.PlayerCommonSkillResp.getDefaultInstance(), 0);
+            writeCommonSkills(context);
         }
         if (taskId == 200104) {
             context.write(50852, ModuleNewOpenResp.newBuilder().addOpens(109).build(), 0);
         }
         for (com.fasterxml.jackson.databind.JsonNode row : Chapter17Data.DATA.path("tasks")) {
             int next = row.path("TaskId").asInt();
-            if (next > 200104 && next != 200111) continue;
+            if (next > 200111) continue;
             for (com.fasterxml.jackson.databind.JsonNode condition : row.path("AcceptableConditionResources")) {
                 if ("TASK_REWARD".equals(condition.path("Type").asText())
                         && condition.path("Context").path("RewardTaskId").asInt() == taskId) {
-                    state.tasks.add(next);
-                    pushChapter17Task(context, next, true);
+                    boolean allowed = true;
+                    for (com.fasterxml.jackson.databind.JsonNode gate : row.path("AcceptableConditionResources")) {
+                        if (next >= 200105 && "reputationRangeLv".equals(gate.path("Type").asText())
+                                && reputationLevels.getOrDefault(context.getId(), 0) < gate.path("Context").path("Level").asInt()) {
+                            allowed = false;
+                        }
+                    }
+                    if (allowed && state.tasks.add(next)) pushChapter17Task(context, next, true);
                 }
             }
         }
@@ -8223,27 +8520,43 @@ public class SceneHandler {
             markChapterPassed(context.getId(), id);
             refreshChapter17Tasks(context);
             if (id == 10300505 && reputationLevels.getOrDefault(context.getId(), 0) < 2) next = 10300501;
+            if (id == 10301005 && reputationLevels.getOrDefault(context.getId(), 0) < 3) next = 10301001;
         } else if (id % 10 == 3) {
             bossUnlockedWave.put(context.getId(), id - 2);
         }
-        if (next == 0) return;
+        if (next == 0) {
+            LOGGER.warn("UNRESOLVED battle continuation beyond captured scope: player={}, chapter={}", context.getId(), id);
+            return;
+        }
         ChapterConfig.Chapter following = ChapterConfig.get(next);
-        boolean gate = id >= 10300501 && id <= 10300505
-                && hasPassedChapter(context.getId(), 10300505)
-                && reputationLevels.getOrDefault(context.getId(), 0) < 2;
+        int gateBoss = id >= 10300501 && id <= 10300505 ? 10300505
+                : id >= 10301001 && id <= 10301005 ? 10301005 : 0;
+        boolean gate = gateBoss != 0 && hasPassedChapter(context.getId(), gateBoss)
+                && next >= gateBoss - 4 && next <= gateBoss;
+        boolean gateReady = reputationLevels.getOrDefault(context.getId(), 0) >= (gateBoss == 10300505 ? 2 : 3);
         int firstWave = id - id % 10 + 1;
         boolean bossOpen = bossUnlockedWave.getOrDefault(context.getId(), 0) == firstWave;
         MainMapPassChapterUpdateResp.Builder response = MainMapPassChapterUpdateResp.newBuilder()
-                .setMainMapChapterId(next).setHistoryTopId(gate ? 10300505 : chapter.isBoss() ? id : bossOpen ? history : id)
-                .setStageTime(following.getStageTime()).setLastStageTime(following.getStageTime() == 10 ? 6 : 10)
+                .setMainMapChapterId(next).setHistoryTopId(gate ? gateBoss : chapter.isBoss() ? id : bossOpen ? history : id)
+                .setStageTime(following.getStageTime()).setLastStageTime(continuationLastStageTime(following))
                 .setHasReward(!pendingHangUpEquips.getOrDefault(context.getId(), java.util.Collections.emptyList()).isEmpty())
                 .setKillMonsterPreHour(180)
                 .setLoseBackId(following.getLoseBackId()).setResetState(chapter.isBoss() || id % 10 == 3)
-                .setChangeReason(gate ? 3 : !chapter.isBoss() && bossOpen ? 4 : 1)
-                .setNextChallengeId(gate ? 10300601 : !chapter.isBoss() && bossOpen ? firstWave + 4 : 0);
+                .setChangeReason(gate ? gateReady ? 4 : 3 : !chapter.isBoss() && bossOpen ? 4 : 1)
+                .setNextChallengeId(gate ? gateBoss == 10300505 ? 10300601 : 10400101
+                        : !chapter.isBoss() && bossOpen ? firstWave + 4 : 0);
         context.write(61952, response.build(), 0);
         context.write(62003, ByteString.EMPTY, 0);
         guidanceStates.put(context.getId(), new GuidanceState(next));
+        LOGGER.info("Main chapter advanced: player={}, cleared={}, next={}, reason={}, nextChallenge={}",
+                context.getId(), id, next, response.getChangeReason(), response.getNextChallengeId());
+    }
+
+    private static int continuationLastStageTime(ChapterConfig.Chapter chapter) {
+        if (chapter.getChapterId() >= 10300801) {
+            return Chapter17Data.row("transitions", "chapterId", chapter.getChapterId()).path("lastStageTime").asInt();
+        }
+        return chapter.getStageTime() == 10 ? 6 : 10;
     }
 
     private void writeFireTowerInfo(IPlayerContext context) {
@@ -8400,6 +8713,10 @@ public class SceneHandler {
     /** 抓包 idx10161–10180 的首次通用技能引导抽取；非通用随机奖池。 */
     private void drawChapter17CommonSkill(IPlayerContext context, LotteryDrawReq request) {
         Chapter17Progress state = later(context.getId());
+        if (state.commonDrawn) {
+            drawContinuationCommonSkill(context, request);
+            return;
+        }
         if (state.commonDrawn || !state.rewarded.contains(200102) || request.getTen()
                 || request.getSubId() != 0 || state.items.getOrDefault(100212, 0L) < 10) return;
         try {
@@ -8417,7 +8734,6 @@ public class SceneHandler {
             context.write(50402, pack.build(), 0);
             context.write(77352, response, 0);
             context.write(77354, parseLotteryInfo("10166-77354.bin"), 0);
-            com.doupo.protocol.PlayerCommonSkillResp.Builder skills = com.doupo.protocol.PlayerCommonSkillResp.newBuilder();
             for (int idx : new int[] { 10168, 10171, 10174, 10177 }) {
                 com.doupo.protocol.CommonSkillLevelUpResp level = com.doupo.protocol.CommonSkillLevelUpResp
                         .parseFrom(Chapter17Data.bytes(idx + "-82056.bin"));
@@ -8434,11 +8750,183 @@ public class SceneHandler {
                 }
                 context.write(50402, consume.build(), 0);
                 context.write(82056, level, 0);
-                skills.addCommonSkillLevel(IntegerAndIntegerPairEntry.newBuilder().setKey(level.getCommonSkillId()).setValue(level.getNewLevel()));
-                context.write(82051, skills.build(), 0);
+                state.commonSkillLevels.put(level.getCommonSkillId(), level.getNewLevel());
+                writeCommonSkills(context);
+            }
+            for (PackUpdateVo p : pack.getPacksList()) {
+                if (p.getPackType() != 8) continue;
+                for (UpdateItem item : p.getUpdateItemsList()) {
+                    if (item.hasPackItem() && item.getPackItem().getSize() > 0) {
+                        state.commonSkillItems.put(item.getPackItem().getKey(), item);
+                    }
+                }
             }
             refreshChapter17Tasks(context);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) { throw new IllegalStateException(e); }
+    }
+
+    /** 同一阶第二次十连使用抓包10205奖项样本；库存累加，不覆盖成官服账号的包。 */
+    private void drawContinuationCommonSkill(IPlayerContext context, LotteryDrawReq request) {
+        Chapter17Progress state = later(context.getId());
+        if (!state.tasks.contains(200107) || state.continuationDrawn || request.getTen()
+                || request.getSubId() != 0 || chapter17ItemCount(context, 100212) < 10) return;
+        try {
+            LotteryDrawResp result = LotteryDrawResp.parseFrom(Chapter17Data.bytes("10205-77352.bin"));
+            Map<Integer, Integer> gains = new java.util.TreeMap<>();
+            for (RewardItemVo reward : result.getRewardItemVosList()) {
+                gains.merge(reward.getItemKey(), Math.toIntExact(reward.getAmount()), Math::addExact);
+            }
+            PackUpdateVo.Builder changes = PackUpdateVo.newBuilder().setPackType(8);
+            long now = System.currentTimeMillis();
+            for (Map.Entry<Integer, Integer> gain : gains.entrySet()) {
+                UpdateItem previous = state.commonSkillItems.get(gain.getKey());
+                UpdateItem updated = previous == null
+                        ? UpdateItem.newBuilder().setItemIndex(gain.getKey()).setPackItem(PackItemVo.newBuilder()
+                                .setKey(gain.getKey()).setSize(gain.getValue())
+                                .setObjectId(context.getId() * 1000000 + gain.getKey())
+                                .setCreateTime(now).setLastGainTime(now)).build()
+                        : previous.toBuilder().setPackItem(previous.getPackItem().toBuilder()
+                                .setSize(Math.addExact(previous.getPackItem().getSize(), gain.getValue()))
+                                .setLastGainTime(now)).build();
+                state.commonSkillItems.put(gain.getKey(), updated);
+                changes.addUpdateItems(updated);
+            }
+            context.write(50402, packUpdate(77351, changeChapter17Item(context, 100212, -10)), 0);
+            context.write(50402, PackUpdateResp.newBuilder().setOperationType(77352).addPacks(changes).build(), 0);
+            context.write(77352, result, 0);
+            context.write(77354, parseLotteryInfo("10206-77354.bin"), 0);
+            for (int skill : gains.keySet()) {
+                if (state.commonSkillLevels.getOrDefault(skill, 0) != 0) continue;
+                UpdateItem item = state.commonSkillItems.get(skill);
+                int count = item.getPackItem().getSize() - 1;
+                UpdateItem consumed = count == 0 ? item.toBuilder().clearPackItem().build()
+                        : item.toBuilder().setPackItem(item.getPackItem().toBuilder().setSize(count)).build();
+                if (count == 0) state.commonSkillItems.remove(skill); else state.commonSkillItems.put(skill, consumed);
+                writeCommonSkillConsumption(context, java.util.Collections.singletonList(consumed));
+                state.commonSkillLevels.put(skill, 1);
+                context.write(82056, com.doupo.protocol.CommonSkillLevelUpResp.newBuilder()
+                        .setCommonSkillId(skill).setOldLevel(0).setNewLevel(1).build(), 0);
+            }
+            writeCommonSkills(context);
+            state.continuationDrawn = true;
+            refreshChapter17Tasks(context);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) { throw new IllegalStateException(e); }
+    }
+
+    private void writeCommonSkills(IPlayerContext context) {
+        Chapter17Progress state = later(context.getId());
+        com.doupo.protocol.PlayerCommonSkillResp.Builder info = com.doupo.protocol.PlayerCommonSkillResp.newBuilder();
+        state.commonSkillSlots.forEach((slot, skill) -> info.addWearIds(
+                IntegerAndIntegerPairEntry.newBuilder().setKey(slot).setValue(skill)));
+        state.commonSkillLevels.forEach((skill, level) -> info.addCommonSkillLevel(
+                IntegerAndIntegerPairEntry.newBuilder().setKey(skill).setValue(level)));
+        context.write(82051, info.build(), 0);
+    }
+
+    /** 第二次抓包 10233-10236；客户端提交完整槽位快照，空列表表示全部卸下。 */
+    @PlayerCmd
+    public void putOnCommonSkill(IPlayerContext context, com.doupo.protocol.CommonSkillPutOnReq request) {
+        Chapter17Progress state = later(context.getId());
+        java.util.Map<Integer, Integer> selected = new java.util.TreeMap<>();
+        java.util.Set<Integer> skillIds = new java.util.HashSet<>();
+        com.fasterxml.jackson.databind.JsonNode slots = Chapter17Data.COMMON_SKILLS.path("slots");
+        int heroLevel = heroLevels.getOrDefault(context.getId(), 1);
+        for (IntegerAndIntegerPairEntry pair : request.getSlotAndSkillIdList()) {
+            int slot = pair.getKey();
+            int skill = pair.getValue();
+            if (slot < 1 || slot > slots.size() || heroLevel < slots.get(slot - 1).asInt()
+                    || state.commonSkillLevels.getOrDefault(skill, 0) <= 0
+                    || selected.containsKey(slot) || !skillIds.add(skill)) {
+                LOGGER.warn("Invalid common skill assignment: player={}, slot={}, skill={}", context.getId(), slot, skill);
+                return;
+            }
+            selected.put(slot, skill);
+        }
+        state.commonSkillSlots.clear();
+        state.commonSkillSlots.putAll(selected);
+        writeCommonSkills(context);
+        com.doupo.protocol.CommonSkillPutOnResp.Builder response = com.doupo.protocol.CommonSkillPutOnResp.newBuilder();
+        selected.forEach((slot, skill) -> response.addSlotAndSkillId(
+                IntegerAndIntegerPairEntry.newBuilder().setKey(slot).setValue(skill)));
+        context.write(82055, response.build(), 0);
+        LOGGER.info("Common skills equipped: player={}, slots={}", context.getId(), selected);
+    }
+
+    @PlayerCmd
+    public void commonSkillLevelUp(IPlayerContext context, com.doupo.protocol.CommonSkillLevelUpReq request) {
+        int skill = request.getCommonSkillId();
+        Chapter17Progress state = later(context.getId());
+        int before = state.commonSkillLevels.getOrDefault(skill, 0);
+        UpdateItem consumed = upgradeCommonSkill(state, skill, false);
+        if (consumed == null) return;
+        writeCommonSkillConsumption(context, java.util.Collections.singletonList(consumed));
+        context.write(82056, com.doupo.protocol.CommonSkillLevelUpResp.newBuilder()
+                .setCommonSkillId(skill).setOldLevel(before).setNewLevel(state.commonSkillLevels.get(skill)).build(), 0);
+        writeCommonSkills(context);
+    }
+
+    /** 使用当前库存和6.9表的逐级Exp成本；不能照抄官服账号的一键升级结果。 */
+    @PlayerCmd
+    public void oneKeyCommonSkillLevelUp(IPlayerContext context, com.doupo.protocol.CommonSkillOneKeyLevelUpReq request) {
+        Chapter17Progress state = later(context.getId());
+        List<UpdateItem> consumed = new ArrayList<>();
+        com.doupo.protocol.CommonSkillOneKeyLevelUpResp.Builder response = com.doupo.protocol.CommonSkillOneKeyLevelUpResp.newBuilder();
+        for (int skill : state.commonSkillLevels.keySet()) {
+            int before = state.commonSkillLevels.get(skill);
+            UpdateItem item = upgradeCommonSkill(state, skill, true);
+            if (item == null) continue;
+            consumed.add(item);
+            response.addOldSkillLevel(IntegerAndIntegerPairEntry.newBuilder().setKey(skill).setValue(before));
+            response.addNewSkillLevel(IntegerAndIntegerPairEntry.newBuilder().setKey(skill).setValue(state.commonSkillLevels.get(skill)));
+        }
+        if (!consumed.isEmpty()) writeCommonSkillConsumption(context, consumed);
+        context.write(82057, response.build(), 0);
+        writeCommonSkills(context);
+        LOGGER.info("Common skills upgraded: player={}, changed={}", context.getId(), consumed.size());
+    }
+
+    private static UpdateItem upgradeCommonSkill(Chapter17Progress state, int skill, boolean all) {
+        int level = state.commonSkillLevels.getOrDefault(skill, 0);
+        UpdateItem item = state.commonSkillItems.get(skill);
+        if (level == 0 || item == null) return null;
+        int remaining = item.getPackItem().getSize();
+        int before = level;
+        while (true) {
+            com.fasterxml.jackson.databind.JsonNode current = commonSkillLevelConfig(skill, level);
+            if (current == null || commonSkillLevelConfig(skill, level + 1) == null) break;
+            int cost = current.path("Exp").asInt();
+            if (cost <= 0 || remaining < cost) break;
+            remaining -= cost;
+            level++;
+            if (!all) break;
+        }
+        if (before == level) return null;
+        state.commonSkillLevels.put(skill, level);
+        UpdateItem.Builder update = item.toBuilder();
+        if (remaining == 0) {
+            update.clearPackItem();
+            state.commonSkillItems.remove(skill);
+        } else {
+            update.getPackItemBuilder().setSize(remaining);
+            state.commonSkillItems.put(skill, update.build());
+        }
+        return update.build();
+    }
+
+    private static com.fasterxml.jackson.databind.JsonNode commonSkillLevelConfig(int skill, int level) {
+        int group = -1;
+        for (com.fasterxml.jackson.databind.JsonNode base : Chapter17Data.COMMON_SKILLS.path("skills")) {
+            if (base.path("Id").asInt() == skill) { group = base.path("LevelGroup").asInt(); break; }
+        }
+        for (com.fasterxml.jackson.databind.JsonNode row : Chapter17Data.COMMON_SKILLS.path("levels")) {
+            if (row.path("LevelGroup").asInt() == group && row.path("Level").asInt() == level) return row;
+        }
+        return null;
+    }
+
+    private static void writeCommonSkillConsumption(IPlayerContext context, List<UpdateItem> items) {
+        context.write(50402, PackUpdateResp.newBuilder().setOperationType(82052)
+                .addPacks(PackUpdateVo.newBuilder().setPackType(8).addAllUpdateItems(items)).build(), 0);
     }
 
     private static TaskUpdateResp nextTaskUpdate(int taskId) {
@@ -8541,6 +9029,7 @@ public class SceneHandler {
 
     private static int previousBossStageTime(
             ChapterConfig.Chapter chapter) {
+        if (chapter.getChapterId() >= 10300801) return continuationLastStageTime(chapter);
         ChapterConfig.Chapter previousBoss =
                 ChapterConfig.get(chapter.getLoseBackId() + 4);
         if (previousBoss == null
@@ -8751,6 +9240,32 @@ public class SceneHandler {
                 .addVoList(buildPlayerUnit(playerId, false))
                 .setOperationType(ServerVoUpdateType.ALL)
                 .build();
+    }
+
+    private SceneUnitVo checkpointPlayerUnit(SceneUnitVo unit, long playerId) {
+        SceneUnitVo.Builder player = unit.toBuilder();
+        GuidanceState state = guidanceStates.get(playerId);
+        int chapter = state == null ? Chapter9TestCheckpoint.CHAPTER : state.chapterId;
+        double attack = playerAttack(playerId, chapter);
+        double hp = restoreHp(playerId, chapter);
+        int level = heroLevels.getOrDefault(playerId, Chapter9TestCheckpoint.LEVEL);
+        PlayerRealmConfig.RealmStats base = PlayerRealmConfig.statsOf(level);
+        SceneFightUnitInfoVo.Builder fight = player.getFightInfoVoBuilder();
+        for (int i = 0; i < fight.getAttributeListCount(); i++) {
+            int type = fight.getAttributeList(i).getType();
+            double value = fight.getAttributeList(i).getValue();
+            if (type == 101001 || type == 191001 || type == 191005) value = attack;
+            if (type == 103001 || type == 103011) value = hp;
+            if (type == 101002) value = base.atk;
+            if (type == 102002) value = base.def;
+            if (type == 103002) value = base.hp;
+            if (type == 102001) value = level == Chapter9TestCheckpoint.LEVEL
+                    ? Chapter9TestCheckpoint.DEFENSE : PlayerRealmConfig.combatDef(level);
+            fight.setAttributeList(i, attribute(type, value));
+        }
+        player.getHeroVoBuilder().setCrossHeroShortInfo(currentHeroShortInfo(playerId))
+                .setFightPower(playerFightForce.getOrDefault(playerId, (double) Chapter9TestCheckpoint.POWER));
+        return player.build();
     }
 
     private HeroShortInfoUpdateResp currentHeroShortInfoUpdate(long playerId) {
