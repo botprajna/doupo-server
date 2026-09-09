@@ -137,8 +137,8 @@ public class Chapter17FlowTest {
     public void everyNewLogRebindsHeroAndContainsConfiguredMonsters() throws Exception {
         Context c = new Context(100000000905L);
         List<Integer> ids=new ArrayList<>();
-        for(int stage=5;stage<=7;stage++)for(int wave:new int[]{1,2,3,5})ids.add(10300000+stage*100+wave);
-        ids.add(10300801);ids.add(1);ids.add(2);ids.add(3);
+        for(int stage=5;stage<=10;stage++)for(int wave:new int[]{1,2,3,5})ids.add(10300000+stage*100+wave);
+        ids.add(1);ids.add(2);ids.add(3);
         for(int id:ids){
             WutanCapturedLog.Capture capture=WutanCapturedLog.load(id);
             assertNotNull(capture);

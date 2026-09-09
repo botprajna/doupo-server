@@ -11,22 +11,44 @@ public class Chapter18FlowTest {
     public void chapter18ClearsThreeWavesThenBossAndEntersChapter19() throws Exception {
         SceneHandler h = new SceneHandler();
         Chapter17FlowTest.Context c = opened(h, 100000001801L);
+        int[] monsters = {4, 5, 6};
         for (int wave = 1; wave <= 3; wave++) {
+            assertEquals(monsters[wave - 1], ChapterConfig.get(10300800 + wave).getMonsterCount());
             clear(h, c, 10300800 + wave);
             MainMapPassChapterUpdateResp update = c.last(MainMapPassChapterUpdateResp.class);
             assertNotNull("18关每波结束都必须推进", update);
             assertEquals(wave == 3 ? 10300801 : 10300801 + wave, update.getMainMapChapterId());
             assertEquals(7, update.getStageTime());
             assertEquals(10, update.getLastStageTime());
+            assertEquals(10300701, update.getLoseBackId());
+            assertEquals(180, update.getKillMonsterPreHour());
             assertEquals(wave == 3 ? 10300805 : 0, update.getNextChallengeId());
+            assertEquals(wave == 3 ? 10300803 : 10300800 + wave, update.getHistoryTopId());
+            assertEquals(wave == 3 ? 4 : 1, update.getChangeReason());
+            assertEquals("抓包 idx10311/10334 首通小怪 hasReward=true，第三波循环 idx10347 为 false",
+                    wave < 3, update.getHasReward());
+            assertEquals(wave == 3, update.getResetState());
         }
         h.resetGuidanceMainMap(c, GuidanceMainMapResetReq.newBuilder().setEnterNext(true).build());
-        assertEquals(10300805, c.last(MainMapPassChapterUpdateResp.class).getMainMapChapterId());
+        MainMapPassChapterUpdateResp entered = c.last(MainMapPassChapterUpdateResp.class);
+        assertEquals(10300805, entered.getMainMapChapterId());
+        assertEquals(10300803, entered.getHistoryTopId());
+        assertEquals(0, entered.getChangeReason());
+        assertEquals(1, entered.getFromResetReq());
+        assertEquals(180, entered.getKillMonsterPreHour());
+        assertTrue(entered.getHasReward());
         clear(h, c, 10300805);
         MainMapPassChapterUpdateResp update = c.last(MainMapPassChapterUpdateResp.class);
         assertEquals(10300901, update.getMainMapChapterId());
+        assertEquals(10300805, update.getHistoryTopId());
+        assertEquals(10300801, update.getLoseBackId());
         assertEquals(8, update.getStageTime());
         assertEquals(7, update.getLastStageTime());
+        assertEquals(1, update.getChangeReason());
+        assertTrue("抓包 idx10369 18关 Boss 通关 hasReward=true", update.getHasReward());
+        assertPassReward(c, 100200, 10);
+        assertPassReward(c, 2, 20);
+        assertPassReward(c, 201001, 10);
     }
 
     @Test
@@ -59,8 +81,22 @@ public class Chapter18FlowTest {
         Chapter17FlowTest.Context c = opened(h, 100000001803L);
         Chapter17Progress state = progress(h,c);
         state.tasks.add(200108);
-        for (int wave : new int[]{1,2,3,5}) clear(h,c,10300900+wave);
+        for (int wave : new int[]{1,2,3}) clear(h,c,10300900+wave);
+        assertEquals(10300905,c.last(MainMapPassChapterUpdateResp.class).getNextChallengeId());
+        assertFalse("抓包 idx10419 第三波后进入循环，hasReward=false",
+                c.last(MainMapPassChapterUpdateResp.class).getHasReward());
+        clear(h,c,10300901); // 抓包 idx10427：进 Boss 前先打一波填充。
+        assertEquals(10300902,c.last(MainMapPassChapterUpdateResp.class).getMainMapChapterId());
+        assertEquals(10300905,c.last(MainMapPassChapterUpdateResp.class).getNextChallengeId());
+        assertEquals(4,c.last(MainMapPassChapterUpdateResp.class).getChangeReason());
+        assertFalse(c.last(MainMapPassChapterUpdateResp.class).getHasReward());
+        h.resetGuidanceMainMap(c,GuidanceMainMapResetReq.newBuilder().setEnterNext(true).build());
+        assertEquals(10300905,c.last(MainMapPassChapterUpdateResp.class).getMainMapChapterId());
+        assertEquals(180,c.last(MainMapPassChapterUpdateResp.class).getKillMonsterPreHour());
+        clear(h,c,10300905);
         assertEquals(10301001,c.last(MainMapPassChapterUpdateResp.class).getMainMapChapterId());
+        assertTrue(c.last(MainMapPassChapterUpdateResp.class).getHasReward());
+        assertPassReward(c,100200,10);
         assertTrue(c.task(200108,TaskPhase.FINISHED));
         reward(h,c,200108);
         assertTrue(c.task(200109,TaskPhase.PROGRESS));
@@ -68,11 +104,19 @@ public class Chapter18FlowTest {
         ((Map<Long,Integer>)field(h,"heroLevels")).put(c.id,17);
         reward(h,c,200109);
         assertTrue(c.task(200110,TaskPhase.PROGRESS));
-        for (int wave : new int[]{1,2,3,5}) clear(h,c,10301000+wave);
+        for (int wave : new int[]{1,2,3}) {
+            clear(h,c,10301000+wave);
+            assertEquals(wave == 3, !c.last(MainMapPassChapterUpdateResp.class).getHasReward());
+        }
+        h.resetGuidanceMainMap(c,GuidanceMainMapResetReq.newBuilder().setEnterNext(true).build());
+        clear(h,c,10301005);
         assertTrue(c.task(200110,TaskPhase.FINISHED));
         assertEquals(10301001,c.last(MainMapPassChapterUpdateResp.class).getMainMapChapterId());
         assertEquals(10400101,c.last(MainMapPassChapterUpdateResp.class).getNextChallengeId());
         assertEquals(3,c.last(MainMapPassChapterUpdateResp.class).getChangeReason());
+        assertFalse("抓包 idx10858 声望不足时 20 关 Boss 通关 hasReward=false",
+                c.last(MainMapPassChapterUpdateResp.class).getHasReward());
+        assertPassReward(c,100200,10);
         c.writes.clear();
         h.resetGuidanceMainMap(c,GuidanceMainMapResetReq.newBuilder().setEnterNext(true).build());
         assertTrue(c.writes.isEmpty());
@@ -95,6 +139,40 @@ public class Chapter18FlowTest {
         assertEquals(10400101,c.last(MainMapPassChapterUpdateResp.class).getMainMapChapterId());
         assertEquals(9,c.last(MainMapPassChapterUpdateResp.class).getStageTime());
         assertEquals(8,c.last(MainMapPassChapterUpdateResp.class).getLastStageTime());
+        assertEquals(180,c.last(MainMapPassChapterUpdateResp.class).getKillMonsterPreHour());
+        assertEquals(1,c.last(MainMapPassChapterUpdateResp.class).getFromResetReq());
+    }
+
+    @Test
+    public void chapter18To20BattleLogsRebindLocalHero() throws Exception {
+        Chapter17FlowTest.Context c = new Chapter17FlowTest.Context(100000001805L);
+        for (int stage = 8; stage <= 10; stage++) {
+            for (int wave : new int[] {1, 2, 3, 5}) {
+                int id = 10300000 + stage * 100 + wave;
+                WutanCapturedLog.Capture capture = WutanCapturedLog.load(id);
+                assertNotNull("缺少 " + id + " 战报", capture);
+                BattleLogVO log = BattleLogVO.parseFrom(WutanBattleLogIdentity.rebind(
+                        WutanCapturedLog.relocated(capture, 30, 2, 40), c.id));
+                int heroes = 0;
+                int monsters = 0;
+                for (BattleLogEntryVO entry : log.getEntryListList()) {
+                    for (BattleLogItemVO item : entry.getItemListList()) {
+                        if (item.getPacketId() != 50804) continue;
+                        for (SceneUnitVo unit : BattleLogUpdateVisibleResp.parseFrom(item.getData())
+                                .getSceneUpdateVisibleResp().getVisibleListList()) {
+                            if (unit.hasHeroVo()) {
+                                heroes++;
+                                assertEquals(c.id, unit.getHeroVo().getPlayerId());
+                                assertEquals(c.id * 1000 + 1, unit.getBaseInfoVo().getId());
+                            }
+                            if (unit.hasSceneMonsterVo()) monsters++;
+                        }
+                    }
+                }
+                assertEquals("single hero " + id, 1, heroes);
+                assertEquals("monster count " + id, ChapterConfig.get(id).getMonsterCount(), monsters);
+            }
+        }
     }
 
     @Test
@@ -134,6 +212,16 @@ public class Chapter18FlowTest {
         Field f = target.getClass().getDeclaredField(name);
         f.setAccessible(true);
         return f.get(target);
+    }
+
+    static void assertPassReward(Chapter17FlowTest.Context c, int itemKey, long amount) {
+        RewardResp reward = c.last(RewardResp.class);
+        assertNotNull("缺少通关奖励", reward);
+        boolean found = false;
+        for (RewardItemVo item : reward.getRewardItemVosList()) {
+            if (item.getItemKey() == itemKey && item.getAmount() == amount) found = true;
+        }
+        assertTrue("缺少奖励 " + itemKey + "x" + amount, found);
     }
 
     static void reward(SceneHandler h, Chapter17FlowTest.Context c, int id) {

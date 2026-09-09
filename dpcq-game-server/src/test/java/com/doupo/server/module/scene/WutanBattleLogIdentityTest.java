@@ -29,7 +29,7 @@ public class WutanBattleLogIdentityTest {
 
     @Test
     public void allCapturedWavesReuseLocalHeroAndRemoveEveryRecordedIdentity() throws Exception {
-        for (int stage = 1; stage <= 7; stage++) {
+        for (int stage = 1; stage <= 10; stage++) {
             for (int wave : new int[] {1, 2, 3, 5}) {
                 int chapter = 10300000 + stage * 100 + wave;
                 WutanCapturedLog.Capture capture = WutanCapturedLog.load(chapter);

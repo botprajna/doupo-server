@@ -8536,10 +8536,12 @@ public class SceneHandler {
         boolean gateReady = reputationLevels.getOrDefault(context.getId(), 0) >= (gateBoss == 10300505 ? 2 : 3);
         int firstWave = id - id % 10 + 1;
         boolean bossOpen = bossUnlockedWave.getOrDefault(context.getId(), 0) == firstWave;
+        // 抓包 18–20：首通 01/02 与未卡声望的 Boss 为 true；第三波循环、填充波、声望门槛循环为 false。
+        boolean looping = gate || (!chapter.isBoss() && bossOpen);
         MainMapPassChapterUpdateResp.Builder response = MainMapPassChapterUpdateResp.newBuilder()
                 .setMainMapChapterId(next).setHistoryTopId(gate ? gateBoss : chapter.isBoss() ? id : bossOpen ? history : id)
                 .setStageTime(following.getStageTime()).setLastStageTime(continuationLastStageTime(following))
-                .setHasReward(!pendingHangUpEquips.getOrDefault(context.getId(), java.util.Collections.emptyList()).isEmpty())
+                .setHasReward(!looping)
                 .setKillMonsterPreHour(180)
                 .setLoseBackId(following.getLoseBackId()).setResetState(chapter.isBoss() || id % 10 == 3)
                 .setChangeReason(gate ? gateReady ? 4 : 3 : !chapter.isBoss() && bossOpen ? 4 : 1)
@@ -9023,7 +9025,7 @@ public class SceneHandler {
                 .setChangeReason(0)
                 .setFromResetReq(1)
                 .setFastPass(false)
-                .setKillMonsterPreHour(0)
+                .setKillMonsterPreHour(chapter.getChapterId() >= 10300501 ? 180 : 0)
                 .build();
     }
 
